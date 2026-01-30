@@ -48,7 +48,7 @@ done
 The `jjtask batch-desc` helper simplifies this:
 
 ```bash
-jjtask batch-desc 's/old/new/' 'tasks_pending()'
+jjtask batch-desc 's/old/new/' -r 'tasks_pending()'
 ```
 </jjtask_helper>
 

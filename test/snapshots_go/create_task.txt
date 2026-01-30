@@ -1,0 +1,25 @@
+# before
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create Test task Test description
+Created new commit kkmpptxz 26ec814e (empty) [task:todo] Test task
+Created new commit k (empty) [task:todo] Test task
+
+# after
+○  kkmpptxz [task:todo] Test task
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask find
+○  kkmpptxz [task:todo] Test task
+│     Test description
+@  qpvuntsm
+│
+~
+
+# after
+○  kkmpptxz [task:todo] Test task
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+

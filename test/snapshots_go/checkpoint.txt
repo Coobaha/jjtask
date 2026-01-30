@@ -1,0 +1,17 @@
+# before
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask checkpoint -m test-checkpoint
+Checkpoint 'test-checkpoint' at operation: 8f47435a3990
+  Restore with: jj op restore 8f47435a3990
+
+  Current state:
+@  qpvuntsm test.user@example.com 2001-02-03 04:05:07 e8849ae1
+│  (empty) (no description set)
+~
+
+# after
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+

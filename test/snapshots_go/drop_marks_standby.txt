@@ -1,0 +1,35 @@
+# before
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create Task to drop
+Created new commit kkmpptxz e60b2e74 (empty) [task:todo] Task to drop
+Created new commit k (empty) [task:todo] Task to drop
+
+# after
+○  kkmpptxz [task:todo] Task to drop
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask wip k
+Rebased 1 commits to destination
+Rebased 1 descendant commits
+Working copy  (@) now at: qpvuntsm 6edd435d (empty) (no description set)
+Parent commit (@-)      : kkmpptxz fe5d054e (empty) [task:wip] Task to drop
+
+# after
+@  qpvuntsm
+○  kkmpptxz [task:wip] Task to drop
+◆  zzzzzzzz root() 00000000
+
+$ jjtask drop k
+Rebased 1 descendant commits
+Working copy  (@) now at: qpvuntsm b4145ecd (empty) (no description set)
+Parent commit (@-)      : kkmpptxz f851f3c2 (empty) [task:standby] Task to drop
+Marked k as standby
+
+# after
+@  qpvuntsm
+○  kkmpptxz [task:standby] Task to drop
+◆  zzzzzzzz root() 00000000
+

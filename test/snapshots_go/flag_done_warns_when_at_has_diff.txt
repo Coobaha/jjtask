@@ -1,0 +1,39 @@
+# before
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create Task to complete
+Created new commit kkmpptxz 882ee089 (empty) [task:todo] Task to complete
+Created new commit k (empty) [task:todo] Task to complete
+
+# after
+○  kkmpptxz [task:todo] Task to complete
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+# wrote workfile.txt (4 bytes)
+
+# before
+Rebased 1 descendant commits onto updated working copy
+○  kkmpptxz [task:todo] Task to complete
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask flag done --rev k
+
+⚠️  Task is empty - no changes to mark done
+If this is a planning-only task, this warning can be ignored.
+
+
+⚠️  Working copy (@) has uncommitted changes:
+workfile.txt | 1 +
+1 file changed, 1 insertion(+), 0 deletions(-)
+Were any of these changes part of this task?
+
+Tip: Consider using 'jjtask wip' or 'jjtask done' for the mega-merge workflow
+
+# after
+○  kkmpptxz [task:done] Task to complete
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+

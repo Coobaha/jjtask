@@ -1,16 +1,19 @@
 ---
 description: Find revisions with specific task flags
-argument-hint: [flag]
+argument-hint: [-s status] [-r revset]
 allowed-tools:
  - Skill(jjtask)
  - Bash
+ - AskUserQuestion
+model: haiku
 ---
 
 <objective>
-List task revisions filtered by status flag.
+List task revisions filtered by status flag or custom revset.
 
 Without arguments: shows all pending tasks.
-With flag: shows only tasks with that flag (todo, wip, done, blocked, etc.)
+With -s: shows tasks with that status (pending, todo, wip, done, blocked, standby, untested, draft, review, all)
+With -r: shows tasks matching custom revset
 
 Part of `/jjtask` - run that skill for full workflow context.
 </objective>

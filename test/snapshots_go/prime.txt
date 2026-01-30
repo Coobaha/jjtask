@@ -1,0 +1,66 @@
+# before
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask prime
+
+## JJ TASK Quick Reference
+
+Task flags: draft → todo → wip → done (also: blocked, standby, untested, review)
+
+### Revsets
+tasks(), tasks_pending(), tasks_todo(), tasks_wip(), tasks_done(), tasks_blocked()
+
+### Commands (all support -R, --quiet, etc.)
+jjtask create TITLE [-p REV]         Create task as child of @ (or REV)
+jjtask wip [TASKS...]                Mark WIP, add as parents of @
+jjtask done [TASKS...]               Mark done, linearize into ancestry
+jjtask drop TASKS... [--abandon]     Remove from @ (standby or abandon)
+jjtask squash                        Flatten @ merge for push
+jjtask find [-s STATUS] [-r REVSET]  List tasks (status: todo/wip/done/all)
+jjtask flag STATUS [-r REV]          Change task flag (defaults to @)
+jjtask parallel T1 T2... [-p REV]    Create sibling tasks (defaults to @)
+jjtask show-desc [-r REV]            Print revision description
+jjtask desc-transform CMD [-r REV]   Transform description with command
+jjtask checkpoint [-m MSG]           Create checkpoint commit
+jjtask stale                         Find done tasks not in @'s ancestry
+jjtask all CMD [ARGS]                Run jj CMD across workspaces
+
+### Workflow
+1. `jjtask create 'task'`        # Plan tasks
+2. `jjtask wip TASK`             # Start (single=edit, multi=merge)
+3. `jj edit TASK` to work        # Work directly in task branch
+4. `jjtask done`                 # Complete, linearizes into ancestry
+5. `jjtask squash`               # Flatten for push
+
+Key: @ is merge of WIP tasks. Work in task branches directly.
+For merge: `jj edit TASK`, not bare `jj absorb`.
+
+### Rules
+- DAG = priority: parent tasks complete before children
+- Chain related tasks: `jjtask create --chain 'Next step'`
+- Read full spec before editing - descriptions are specifications
+- Never mark done unless ALL acceptance criteria pass
+- Use `jjtask flag review/blocked/untested` if incomplete
+- Stop and report if unsure - don't attempt JJ recovery ops
+
+### Before Saying Done
+[ ] All acceptance criteria in task spec pass
+[ ] `jjtask done TASK` - mark complete
+[ ] `jjtask squash` - flatten for push when ready
+
+### Native Task Tools
+TaskCreate, TaskUpdate, TaskList, TaskGet - for session workflow tracking
+Use for: multi-step work within a session, dependency ordering, progress display
+jjtask = persistent tasks in repo history; Task* = ephemeral session tracking
+
+### Current Tasks
+
+No tasks. Create one with: jjtask create 'Task title'
+
+### Changes (0 files +0 -0)
+
+# after
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+

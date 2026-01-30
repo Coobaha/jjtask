@@ -1,0 +1,68 @@
+# wrote base.txt (4 bytes)
+
+$ jj describe -m Base
+Working copy  (@) now at: qpvuntsm 7dea31c7 Base
+Parent commit (@-)      : zzzzzzzz 00000000 (empty) (no description set)
+
+# before
+@  qpvuntsm Base
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create Orphan task
+Created new commit zsuskuln 530441c1 (empty) [task:todo] Orphan task
+Created new commit zs (empty) [task:todo] Orphan task
+
+# after
+○  zsuskuln [task:todo] Orphan task
+@  qpvuntsm Base
+◆  zzzzzzzz root() 00000000
+
+$ jj new -m Working commit
+Working copy  (@) now at: yqosqzyt 83d4c2e8 (empty) Working commit
+Parent commit (@-)      : qpvuntsm 7dea31c7 Base
+
+# wrote work.txt (11 bytes)
+
+$ jj status
+Working copy changes:
+A work.txt
+Working copy  (@) : yqosqzyt e59fee1c Working commit
+Parent commit (@-): qpvuntsm 7dea31c7 Base
+
+# before
+@  yqosqzyt Working commit
+│ ○  zsuskuln [task:todo] Orphan task
+├─╯
+○  qpvuntsm Base
+◆  zzzzzzzz root() 00000000
+
+$ jjtask done zs
+
+⚠️  Task is empty - no changes to mark done
+If this is a planning-only task, this warning can be ignored.
+
+
+⚠️  Working copy (@) has uncommitted changes:
+work.txt | 1 +
+1 file changed, 1 insertion(+), 0 deletions(-)
+Were any of these changes part of this task?
+
+
+Warning: zs marked done but not in @'s ancestry (orphan tasks)
+These tasks were never 'wip' - their specs won't be in linear history.
+
+Options:
+  1. Consolidate specs into @ description, then abandon tasks
+  2. Linearize into ancestry (may conflict)
+  3. Leave as-is (manual cleanup later)
+
+View specs: jj log -r 'zs' --no-graph -T description
+
+
+# after
+@  yqosqzyt Working commit
+│ ○  zsuskuln [task:done] Orphan task
+├─╯
+○  qpvuntsm Base
+◆  zzzzzzzz root() 00000000
+

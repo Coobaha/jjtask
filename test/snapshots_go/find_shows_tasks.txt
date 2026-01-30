@@ -1,0 +1,39 @@
+# before
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create Task A
+Created new commit kkmpptxz daaa8cef (empty) [task:todo] Task A
+Created new commit k (empty) [task:todo] Task A
+
+# after
+○  kkmpptxz [task:todo] Task A
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create Task B
+Created new commit royxmykx 529cd844 (empty) [task:todo] Task B
+Created new commit r (empty) [task:todo] Task B
+
+# after
+○  royxmykx [task:todo] Task B
+│ ○  kkmpptxz [task:todo] Task A
+├─╯
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask find
+○  royxmykx [task:todo] Task B
+│ ○  kkmpptxz [task:todo] Task A
+├─╯
+@  qpvuntsm
+│
+~
+
+# after
+○  royxmykx [task:todo] Task B
+│ ○  kkmpptxz [task:todo] Task A
+├─╯
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+

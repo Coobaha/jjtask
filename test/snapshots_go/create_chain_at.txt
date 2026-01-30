@@ -1,0 +1,36 @@
+# before
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create --chain Task 1
+Created new commit kkmpptxz 705c213c (empty) [task:todo] Task 1
+Created new commit k (empty) [task:todo] Task 1
+
+# after
+○  kkmpptxz [task:todo] Task 1
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create --chain Task 2
+Created new commit royxmykx f6051aab (empty) [task:todo] Task 2
+Created new commit r (empty) [task:todo] Task 2
+
+# after
+○  royxmykx [task:todo] Task 2
+○  kkmpptxz [task:todo] Task 1
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create --chain Task 3
+Created new commit yostqsxw 34023bbd (empty) [task:todo] Task 3
+Created new commit y (empty) [task:todo] Task 3
+
+# after
+○  yostqsxw [task:todo] Task 3
+○  royxmykx [task:todo] Task 2
+○  kkmpptxz [task:todo] Task 1
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jj log -r description(substring:"Task 3") & tasks() --no-graph -T parents.map(|p| p.description().first_line()).join(",")
+[task:todo] Task 2

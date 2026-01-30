@@ -4,34 +4,31 @@ allowed-tools:
  - Skill(jjtask)
  - Bash
  - Read
+ - AskUserQuestion
+model: haiku
 ---
 
 <objective>
 Review the current task DAG structure and suggest improvements:
 - Identify dependency issues (task mentions another but isn't a child)
 - Find parallelization opportunities (independent tasks that could run concurrently)
-- Detect structural problems (orphaned tasks, blocked children, incomplete drafts)
-
-Part of `/jjtask` - run that skill for full workflow context.
+- Detect structural problems (blocked children, incomplete drafts)
 </objective>
 
 <context>
 Current task DAG:
-!`jjtask find 2>/dev/null || echo "no tasks"`
-
-Task descriptions (for dependency analysis):
-!`for rev in $(jj log -r 'tasks_pending()' -T 'change_id.shortest() ++ "\n"' --no-graph 2>/dev/null | head -10); do echo "=== $rev ==="; jjtask show-desc "$rev" 2>/dev/null | head -20; echo; done`
 </context>
 
 <process>
-1. Review the DAG structure above
-2. Read task descriptions looking for dependency keywords: "after", "requires", "depends on", "needs", "once X is done"
-3. Identify issues:
-   - Tasks referencing others that aren't ancestors
-   - Sequential tasks that could be parallel
-   - Orphaned tasks needing hoist
-4. Propose concrete rebase commands for each issue
-5. Execute rebases only with user confirmation
+1. Run `jjtask find -s all` and `jj log -r 'tasks()` to get DAG structure
+2. Log: "Reading task descriptions for dependency keywords..."
+3. For each task, read description with `jjtask show-desc -r REV`
+4. Log findings as you discover them:
+   - "Found: mp references lv but isn't a child"
+   - "Found: ky and pkm overlap - same precompact feature"
+5. Present summary of all issues found
+6. Propose concrete rebase commands for each issue
+7. Execute rebases only with user confirmation, logging each: "Rebased X to Y"
 </process>
 
 <success_criteria>

@@ -1,0 +1,60 @@
+# wrote base.txt (4 bytes)
+
+$ jj describe -m Base
+Working copy  (@) now at: qpvuntsm 7dea31c7 Base
+Parent commit (@-)      : zzzzzzzz 00000000 (empty) (no description set)
+
+# before
+@  qpvuntsm Base
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create Task
+Created new commit zsuskuln 374db492 (empty) [task:todo] Task
+Created new commit zs (empty) [task:todo] Task
+
+# after
+○  zsuskuln [task:todo] Task
+@  qpvuntsm Base
+◆  zzzzzzzz root() 00000000
+
+$ jj edit zs
+Working copy  (@) now at: zsuskuln 374db492 (empty) [task:todo] Task
+Parent commit (@-)      : qpvuntsm 7dea31c7 Base
+
+# wrote task.txt (7 bytes)
+
+# before
+@  zsuskuln [task:todo] Task
+○  qpvuntsm Base
+◆  zzzzzzzz root() 00000000
+
+$ jjtask wip
+Working copy  (@) now at: zsuskuln 43311e40 [task:wip] Task
+Parent commit (@-)      : qpvuntsm 7dea31c7 Base
+
+# after
+@  zsuskuln [task:wip] Task
+○  qpvuntsm Base
+◆  zzzzzzzz root() 00000000
+
+$ jj new
+Working copy  (@) now at: kpqxywon 9dd85687 (empty) (no description set)
+Parent commit (@-)      : zsuskuln 43311e40 [task:wip] Task
+
+# before
+@  kpqxywon
+○  zsuskuln [task:wip] Task
+○  qpvuntsm Base
+◆  zzzzzzzz root() 00000000
+
+$ jjtask done zs
+Rebased 1 descendant commits
+Working copy  (@) now at: kpqxywon 0322a854 (empty) (no description set)
+Parent commit (@-)      : zsuskuln 02322779 [task:done] Task
+
+# after
+@  kpqxywon
+○  zsuskuln [task:done] Task
+○  qpvuntsm Base
+◆  zzzzzzzz root() 00000000
+

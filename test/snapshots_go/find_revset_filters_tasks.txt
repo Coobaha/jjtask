@@ -1,0 +1,36 @@
+# before
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create My task
+Created new commit kkmpptxz 971cf556 (empty) [task:todo] My task
+Created new commit k (empty) [task:todo] My task
+
+# after
+○  kkmpptxz [task:todo] My task
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jj new -m Regular commit
+Working copy  (@) now at: mzvwutvl 40071063 (empty) Regular commit
+Parent commit (@-)      : qpvuntsm e8849ae1 (empty) (no description set)
+
+# before
+@  mzvwutvl Regular commit
+│ ○  kkmpptxz [task:todo] My task
+├─╯
+○  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask find -r all()
+○  kkmpptxz [task:todo] My task
+│
+~
+
+# after
+@  mzvwutvl Regular commit
+│ ○  kkmpptxz [task:todo] My task
+├─╯
+○  qpvuntsm
+◆  zzzzzzzz root() 00000000
+

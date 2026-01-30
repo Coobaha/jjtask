@@ -164,18 +164,8 @@ jj log -r 'description(substring:"[task:")'     # CORRECT
 jj log -r 'tasks()'                             # BEST - use alias
 ```
 </pitfall>
+
 </anti_patterns>
-
-<scripts>
-Helper scripts:
-
-| Script                        | Purpose                              |
-| ----------------------------- | ------------------------------------ |
-| `jjtask show-desc [REV]`         | Print full description only          |
-| `jjtask desc-transform REV SED`  | Pipe description through command     |
-| `jjtask batch-desc SED REVSET`   | Batch transform descriptions         |
-| `jjtask checkpoint [NAME]`       | Record op ID before risky operations |
-</scripts>
 
 <recovery>
 

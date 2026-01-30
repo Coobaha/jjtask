@@ -1,0 +1,23 @@
+# before
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create --draft @ Draft task
+Created new commit kkmpptxz 3027c57a (empty) [task:draft] @
+Created new commit k (empty) [task:draft] @
+
+# after
+○  kkmpptxz [task:draft] @
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask find --status all
+○  kkmpptxz [task:draft] @
+│     Draft task
+~
+
+# after
+○  kkmpptxz [task:draft] @
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+

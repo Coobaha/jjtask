@@ -64,7 +64,7 @@ separate(" ",
 
 'desc_lines' = 'description.trim().lines().len()'
 'has_spec' = 'desc_lines > 3 && description.starts_with("[task:")'
-'desc_more_text' = '"+" ++ desc_lines ++ "L"'
+'desc_more_text' = '"[desc:" ++ desc_lines ++ "L]"'
 
 'parent_ids' = 'parents.map(|p| p.change_id().shortest()).join(",")'
 
@@ -76,7 +76,7 @@ if(root,
       separate(" ",
         format_short_change_id(change_id),
         if(description.starts_with("[task:"), label("task " ++ task_flag, "[task:" ++ task_flag ++ "]"), ""),
-        task_title,
+            task_title,
       ),
       if(has_spec, " " ++ label("hint", desc_more_text), ""),
       "\n",
@@ -93,18 +93,21 @@ if(root,
 'task_log_flat' = '''
 if(root,
   "",
-  concat(
-    separate(" ",
-      format_short_change_id(change_id),
-      "(" ++ parent_ids ++ ")",
-      if(description.starts_with("[task:"), label("task " ++ task_flag, "[task:" ++ task_flag ++ "]"), ""),
-      task_title,
-    ),
-    if(has_spec, " " ++ label("hint", desc_more_text), ""),
-    "\n",
-    if(description.starts_with("[task:") && task_body_content.len() > 0,
-      "   " ++ truncate_end(120, task_body, "...") ++ "\n",
-      ""
+  label(if(current_working_copy, "working_copy"),
+    concat(
+      if(current_working_copy, "@  ", "○  "),
+      separate(" ",
+        format_short_change_id(change_id),
+        "(" ++ parent_ids ++ ")",
+        if(description.starts_with("[task:"), label("task " ++ task_flag, "[task:" ++ task_flag ++ "]"), ""),
+        task_title,
+      ),
+      if(has_spec, " " ++ label("hint", desc_more_text), ""),
+      "\n",
+      if(description.starts_with("[task:") && task_body_content.len() > 0,
+        "      " ++ truncate_end(120, task_body, "...") ++ "\n",
+        ""
+      ),
     ),
   )
 )
@@ -112,6 +115,19 @@ if(root,
 
 'task_minimal' = '''
 format_short_change_id(change_id) ++ " " ++ label("task " ++ task_flag, "[task:" ++ task_flag ++ "]") ++ " " ++ task_title ++ "\n"
+'''
+
+# Clean template for test snapshots (no email, no commit hash)
+'test_log' = '''
+if(root,
+  format_root_commit(self),
+  concat(
+    format_short_change_id(change_id),
+    " ",
+    description.first_line(),
+    "\n",
+  )
+)
 '''
 
 [aliases]

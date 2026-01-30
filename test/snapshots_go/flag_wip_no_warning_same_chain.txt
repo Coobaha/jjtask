@@ -1,0 +1,44 @@
+# before
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create Parent task
+Created new commit kkmpptxz 63208f86 (empty) [task:todo] Parent task
+Created new commit k (empty) [task:todo] Parent task
+
+# after
+○  kkmpptxz [task:todo] Parent task
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create --parent k Child task
+Created new commit yqosqzyt 70b2bafa (empty) [task:todo] Child task
+Created new commit y (empty) [task:todo] Child task
+
+# after
+○  yqosqzyt [task:todo] Child task
+○  kkmpptxz [task:todo] Parent task
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jj log -r children(k) & tasks() --no-graph -T change_id.shortest()
+y
+$ jjtask flag wip --rev k
+Rebased 1 descendant commits
+Tip: Consider using 'jjtask wip' or 'jjtask done' for the mega-merge workflow
+
+# after
+○  yqosqzyt [task:todo] Child task
+○  kkmpptxz [task:wip] Parent task
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask flag wip --rev y
+Tip: Consider using 'jjtask wip' or 'jjtask done' for the mega-merge workflow
+
+# after
+○  yqosqzyt [task:wip] Child task
+○  kkmpptxz [task:wip] Parent task
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+

@@ -1,0 +1,56 @@
+# before
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create Task A
+Created new commit kkmpptxz daaa8cef (empty) [task:todo] Task A
+Created new commit k (empty) [task:todo] Task A
+
+# after
+○  kkmpptxz [task:todo] Task A
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create --parent @ Task B
+Created new commit royxmykx 529cd844 (empty) [task:todo] Task B
+Created new commit r (empty) [task:todo] Task B
+
+# after
+○  royxmykx [task:todo] Task B
+│ ○  kkmpptxz [task:todo] Task A
+├─╯
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jj log -r tasks() & description(substring:"Task A") --no-graph -T change_id.shortest()
+k
+$ jj log -r tasks() & description(substring:"Task B") --no-graph -T change_id.shortest()
+r
+$ jjtask flag wip --rev k
+Tip: Consider using 'jjtask wip' or 'jjtask done' for the mega-merge workflow
+
+# after
+○  kkmpptxz [task:wip] Task A
+│ ○  royxmykx [task:todo] Task B
+├─╯
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask flag wip --rev r
+
+⚠️  Another WIP task exists: k [task:wip] Task A
+Multiple WIP tasks in different branches can be confusing.
+Options:
+  • Pause existing: jjtask flag blocked -r k
+  • Switch to existing: jj edit k
+  • Rebase to chain: jj rebase -s r -d k
+
+Tip: Consider using 'jjtask wip' or 'jjtask done' for the mega-merge workflow
+
+# after
+○  royxmykx [task:wip] Task B
+│ ○  kkmpptxz [task:wip] Task A
+├─╯
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+

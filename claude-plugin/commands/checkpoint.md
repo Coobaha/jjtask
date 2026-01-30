@@ -1,13 +1,15 @@
 ---
 description: Create a checkpoint commit
-argument-hint: [name]
+argument-hint: [-m message]
 allowed-tools:
  - Bash
+model: haiku
 ---
 
 <objective>
 Record the current operation ID before risky operations.
 
+Example: `jjtask checkpoint -m "Before risky rebase"`
 Restore later with: `jj op restore <op-id>`
 </objective>
 

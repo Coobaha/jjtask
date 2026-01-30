@@ -1,0 +1,13 @@
+# before
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create New task
+Created new commit kkmpptxz 410d4e2a (empty) [task:todo] New task
+Created new commit k (empty) [task:todo] New task
+
+# after
+○  kkmpptxz [task:todo] New task
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+

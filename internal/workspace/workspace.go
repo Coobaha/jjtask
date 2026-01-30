@@ -6,76 +6,34 @@ import (
 	"path/filepath"
 	"strings"
 
-	"gopkg.in/yaml.v3"
+	"jjtask/internal/config"
 )
 
-// Config represents .jj-workspaces.yaml
-type Config struct {
-	Repos []Repo `yaml:"repos"`
-}
+// Repo is an alias for config.Repo for backwards compatibility
+type Repo = config.Repo
 
-// Repo represents a single repo in the config
-type Repo struct {
-	Path string `yaml:"path"`
-	Name string `yaml:"name"`
-}
+// Config is an alias for backwards compatibility
+type Config = config.Config
 
-// FindConfig locates .jj-workspaces.yaml by traversing up from cwd
+// FindConfig delegates to config package
 func FindConfig() (string, error) {
-	dir, err := os.Getwd()
-	if err != nil {
-		return "", err
-	}
-	for dir != "/" {
-		configPath := filepath.Join(dir, ".jj-workspaces.yaml")
-		if _, err := os.Stat(configPath); err == nil {
-			return configPath, nil
-		}
-		dir = filepath.Dir(dir)
-	}
-	return "", nil
+	path, _, err := config.FindConfig()
+	return path, err
 }
 
-// Load reads the workspace config
-func Load() (*Config, string, error) {
-	configPath, err := FindConfig()
-	if err != nil {
-		return nil, "", err
-	}
-	if configPath == "" {
-		return nil, "", nil
-	}
-
-	data, err := os.ReadFile(configPath)
-	if err != nil {
-		return nil, "", err
-	}
-
-	var cfg Config
-	if err := yaml.Unmarshal(data, &cfg); err != nil {
-		return nil, "", err
-	}
-
-	root := filepath.Dir(configPath)
-	return &cfg, root, nil
+// Load delegates to config package
+func Load() (cfg *Config, root string, err error) {
+	return config.Load()
 }
 
-// IsMultiRepo returns true if multi-repo config exists
+// IsMultiRepo delegates to config package
 func IsMultiRepo() bool {
-	cfg, _, _ := Load()
-	return cfg != nil && len(cfg.Repos) > 1
+	return config.IsMultiRepo()
 }
 
-// GetRepos returns list of repo paths
-func GetRepos() ([]Repo, string, error) {
-	cfg, root, err := Load()
-	if err != nil {
-		return nil, "", err
-	}
-	if cfg == nil {
-		return []Repo{{Path: ".", Name: "workspace"}}, "", nil
-	}
-	return cfg.Repos, root, nil
+// GetRepos delegates to config package
+func GetRepos() (repos []Repo, root string, err error) {
+	return config.GetRepos()
 }
 
 // ResolveRepoPath resolves a repo path relative to workspace root
@@ -121,7 +79,7 @@ func RelativePath(target string) string {
 
 // ContextHint returns context hint for multi-repo or subdirectory usage
 func ContextHint() string {
-	cfg, workspaceRoot, err := Load()
+	cfg, workspaceRoot, err := config.Load()
 	if err != nil || cfg == nil {
 		return ""
 	}
@@ -141,7 +99,8 @@ func ContextHint() string {
 		realRoot = workspaceRoot
 	}
 
-	isMulti := len(cfg.Repos) > 1
+	repos := cfg.Workspaces.Repos
+	isMulti := len(repos) > 1
 	inSubdir := realCwd != realRoot
 
 	if !isMulti && !inSubdir {
@@ -150,7 +109,7 @@ func ContextHint() string {
 
 	// Find which repo we're in
 	var currentRepo string
-	for _, repo := range cfg.Repos {
+	for _, repo := range repos {
 		repoPath := ResolveRepoPath(repo, workspaceRoot)
 		realRepo, err := filepath.EvalSymlinks(repoPath)
 		if err != nil {

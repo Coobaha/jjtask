@@ -1,0 +1,38 @@
+# before
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask parallel Task A Task B Task C
+Created new commit kkmpptxz daaa8cef (empty) [task:todo] Task A
+Created new commit kkmpptxz/0 b5cdc105 (divergent) (empty) [task:todo] Task B
+Created new commit kkmpptxz/0 165b7089 (divergent) (empty) [task:todo] Task C
+Created 3 parallel task branches from @
+
+# after
+○  kkmpptxz [task:todo] Task C
+│ ○  kkmpptxz [task:todo] Task B
+├─╯
+│ ○  kkmpptxz [task:todo] Task A
+├─╯
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask find
+○  kkmpptxz [task:todo] Task C
+│ ○  kkmpptxz [task:todo] Task B
+├─╯
+│ ○  kkmpptxz [task:todo] Task A
+├─╯
+@  qpvuntsm
+│
+~
+
+# after
+○  kkmpptxz [task:todo] Task C
+│ ○  kkmpptxz [task:todo] Task B
+├─╯
+│ ○  kkmpptxz [task:todo] Task A
+├─╯
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+

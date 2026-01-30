@@ -1,0 +1,170 @@
+=== root ===
+# before
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create ROOT: CI/CD pipeline
+Created new commit kkmpptxz 5776b840 (empty) [task:todo] ROOT: CI/CD pipeline
+Created new commit k (empty) [task:todo] ROOT: CI/CD pipeline
+
+# after
+○  kkmpptxz [task:todo] ROOT: CI/CD pipeline
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create --draft @ ROOT: Terraform modules
+Created new commit royxmykx 96216717 (empty) [task:draft] @
+Created new commit r (empty) [task:draft] @
+
+# after
+○  royxmykx [task:draft] @
+│ ○  kkmpptxz [task:todo] ROOT: CI/CD pipeline
+├─╯
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create ROOT: Integration tests
+Created new commit yostqsxw 2a30311b (empty) [task:todo] ROOT: Integration tests
+Created new commit y (empty) [task:todo] ROOT: Integration tests
+
+# after
+○  yostqsxw [task:todo] ROOT: Integration tests
+│ ○  royxmykx [task:draft] @
+├─╯
+│ ○  kkmpptxz [task:todo] ROOT: CI/CD pipeline
+├─╯
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask find --status all
+migrated .jj-workspaces.yaml → .jjtask.toml
+cwd: . | repo: root
+
+=== frontend: jj -R ./frontend log ===
+○  yostqsxw [task:todo] FE: Error boundaries
+│
+~
+
+○  royxmykx [task:draft] @
+│     FE: Dark mode toggle
+~
+
+○  kkmpptxz [task:todo] FE: Auth login page
+│
+~
+
+=== backend: jj -R ./backend log ===
+○  yostqsxw [task:todo] BE: Background jobs
+│
+~
+
+○  royxmykx [task:draft] @
+│     BE: GraphQL schema
+~
+
+○  kkmpptxz [task:todo] BE: User API endpoints
+│
+~
+
+=== root: jj -R . log ===
+○  yostqsxw [task:todo] ROOT: Integration tests
+│
+~
+
+○  royxmykx [task:draft] @
+│     ROOT: Terraform modules
+~
+
+○  kkmpptxz [task:todo] ROOT: CI/CD pipeline
+│
+~
+
+
+# after
+○  yostqsxw [task:todo] ROOT: Integration tests
+│ ○  royxmykx [task:draft] @
+├─╯
+│ ○  kkmpptxz [task:todo] ROOT: CI/CD pipeline
+├─╯
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+
+=== frontend ===
+# before
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create FE: Auth login page
+Created new commit kkmpptxz 5b5ebcae (empty) [task:todo] FE: Auth login page
+Created new commit k (empty) [task:todo] FE: Auth login page
+
+# after
+○  kkmpptxz [task:todo] FE: Auth login page
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create --draft @ FE: Dark mode toggle
+Created new commit royxmykx d37fb595 (empty) [task:draft] @
+Created new commit r (empty) [task:draft] @
+
+# after
+○  royxmykx [task:draft] @
+│ ○  kkmpptxz [task:todo] FE: Auth login page
+├─╯
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create FE: Error boundaries
+Created new commit yostqsxw 3370f8bf (empty) [task:todo] FE: Error boundaries
+Created new commit y (empty) [task:todo] FE: Error boundaries
+
+# after
+○  yostqsxw [task:todo] FE: Error boundaries
+│ ○  royxmykx [task:draft] @
+├─╯
+│ ○  kkmpptxz [task:todo] FE: Auth login page
+├─╯
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+
+=== backend ===
+# before
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create BE: User API endpoints
+Created new commit kkmpptxz 059fdf74 (empty) [task:todo] BE: User API endpoints
+Created new commit k (empty) [task:todo] BE: User API endpoints
+
+# after
+○  kkmpptxz [task:todo] BE: User API endpoints
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create --draft @ BE: GraphQL schema
+Created new commit royxmykx 516f5850 (empty) [task:draft] @
+Created new commit r (empty) [task:draft] @
+
+# after
+○  royxmykx [task:draft] @
+│ ○  kkmpptxz [task:todo] BE: User API endpoints
+├─╯
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create BE: Background jobs
+Created new commit yostqsxw 2b988d15 (empty) [task:todo] BE: Background jobs
+Created new commit y (empty) [task:todo] BE: Background jobs
+
+# after
+○  yostqsxw [task:todo] BE: Background jobs
+│ ○  royxmykx [task:draft] @
+├─╯
+│ ○  kkmpptxz [task:todo] BE: User API endpoints
+├─╯
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+

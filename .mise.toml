@@ -8,9 +8,9 @@ description = "Build the jjtask binary"
 run = "go build -o bin/jjtask-go ./cmd/jjtask"
 
 [tasks.test]
-description = "Run integration tests"
+description = "Run Go integration tests"
 depends = ["build"]
-run = "./test.sh"
+run = "go test ./cmd/jjtask/cmd/..."
 
 [tasks.lint]
 description = "Run golangci-lint"

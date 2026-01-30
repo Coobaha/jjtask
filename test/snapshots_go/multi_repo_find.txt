@@ -1,0 +1,62 @@
+=== root ===
+# before
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask find
+migrated .jj-workspaces.yaml → .jjtask.toml
+cwd: . | repo: root
+
+=== frontend: jj -R ./frontend log ===
+○  kkmpptxz [task:todo] Frontend task
+@  qpvuntsm
+│
+~
+
+=== backend: jj -R ./backend log ===
+○  kkmpptxz [task:todo] Backend task
+@  qpvuntsm
+│
+~
+
+=== root: jj -R . log ===
+@  qpvuntsm
+│  .jjtask.toml | 6 ++++++
+~  1 file changed, 6 insertions(+), 0 deletions(-)
+
+
+# after
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+
+=== frontend ===
+# before
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create Frontend task
+Created new commit kkmpptxz 87519c62 (empty) [task:todo] Frontend task
+Created new commit k (empty) [task:todo] Frontend task
+
+# after
+○  kkmpptxz [task:todo] Frontend task
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+
+=== backend ===
+# before
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create Backend task
+Created new commit kkmpptxz dd1114cf (empty) [task:todo] Backend task
+Created new commit k (empty) [task:todo] Backend task
+
+# after
+○  kkmpptxz [task:todo] Backend task
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+

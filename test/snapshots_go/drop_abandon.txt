@@ -1,0 +1,25 @@
+# before
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create Task to abandon
+Created new commit kkmpptxz 43aa9ddd (empty) [task:todo] Task to abandon
+Created new commit k (empty) [task:todo] Task to abandon
+
+# after
+○  kkmpptxz [task:todo] Task to abandon
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask drop --abandon k
+Abandoned 1 commits:
+  kkmpptxz 43aa9ddd (empty) [task:todo] Task to abandon
+Abandoned k
+
+# after
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jj log -r k --no-graph
+Error: Revision `k` doesn't exist
+

@@ -1,0 +1,47 @@
+# before
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create Parent task
+Created new commit kkmpptxz 63208f86 (empty) [task:todo] Parent task
+Created new commit k (empty) [task:todo] Parent task
+
+# after
+○  kkmpptxz [task:todo] Parent task
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask flag blocked --rev k
+Tip: Consider using 'jjtask wip' or 'jjtask done' for the mega-merge workflow
+
+# after
+○  kkmpptxz [task:blocked] Parent task
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create --parent k Child task
+Created new commit znkkpsqq 04688420 (empty) [task:todo] Child task
+Created new commit zn (empty) [task:todo] Child task
+
+# after
+○  znkkpsqq [task:todo] Child task
+○  kkmpptxz [task:blocked] Parent task
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jj log -r children(k) & tasks() --no-graph -T change_id.shortest()
+zn
+$ jjtask flag wip --rev zn
+
+⚠️  Ancestor task is blocked:
+  • k [task:blocked] Parent task
+Consider unblocking the ancestor first.
+
+Tip: Consider using 'jjtask wip' or 'jjtask done' for the mega-merge workflow
+
+# after
+○  znkkpsqq [task:wip] Child task
+○  kkmpptxz [task:blocked] Parent task
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+

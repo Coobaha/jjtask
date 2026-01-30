@@ -13,7 +13,10 @@ import (
 	"jjtask/internal/workspace"
 )
 
-var findFormat string
+var (
+	findFormat string
+	findStatus string
+)
 
 type TaskItem struct {
 	ChangeID    string `json:"change_id"`
@@ -32,24 +35,23 @@ type FindOutput struct {
 var findRevset string
 
 var findCmd = &cobra.Command{
-	Use:   "find [flag]",
+	Use:   "find [--status STATUS] [--revisions REVSET]",
 	Short: "List tasks",
-	Long: `List tasks matching a flag filter or custom revset.
+	Long: `List tasks matching a status filter or custom revset.
 
-Without arguments, shows pending tasks. With a flag argument, shows tasks
-matching that flag. Use -r for custom revsets.
+Without arguments, shows pending tasks. With --status, shows tasks
+matching that status. Use -r for custom revsets.
 
-Flag shortcuts: pending, todo, wip, done, blocked, standby, untested, draft, review, all
+Status options: pending, todo, wip, done, blocked, standby, untested, draft, review, all
 
 Examples:
-  jjtask find              # pending tasks (default)
-  jjtask find todo         # todo tasks only
-  jjtask find wip          # work in progress
-  jjtask find done         # completed tasks
-  jjtask find all          # all tasks including done
-  jjtask find -r 'tasks() & mine()'           # custom revset
-  jjtask find -r 'ancestors(tasks_pending(), 3)'  # tasks with context`,
-	Args: cobra.MaximumNArgs(1),
+  jjtask find                    # pending tasks (default)
+  jjtask find --status todo      # todo tasks only
+  jjtask find -s wip             # work in progress
+  jjtask find -s done            # completed tasks
+  jjtask find -s all             # all tasks including done
+  jjtask find -r 'tasks() & mine()'`,
+	Args: cobra.NoArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var revset string
 		customRevset := findRevset != ""
@@ -59,9 +61,9 @@ Examples:
 			revset = fmt.Sprintf("(%s) & tasks()", findRevset)
 		} else {
 			taskRevset := "tasks_pending()"
-			if len(args) == 1 {
-				flag := args[0]
-				switch flag {
+			status := findStatus
+			if status != "" {
+				switch status {
 				case "pending":
 					taskRevset = "tasks_pending()"
 				case "todo":
@@ -83,11 +85,11 @@ Examples:
 				case "all":
 					taskRevset = "tasks()"
 				default:
-					return fmt.Errorf("unknown flag %q", flag)
+					return fmt.Errorf("unknown status %q", status)
 				}
 			}
 			// Show connected DAG for active tasks, plain list for done/all
-			if len(args) == 1 && (args[0] == "done" || args[0] == "all") {
+			if status == "done" || status == "all" {
 				revset = taskRevset
 			} else {
 				revset = fmt.Sprintf("%s | fork_point(%s | @)::@", taskRevset, taskRevset)
@@ -162,10 +164,11 @@ Examples:
 }
 
 func init() {
+	findCmd.Flags().StringVarP(&findStatus, "status", "s", "", "Filter by status (pending, todo, wip, done, blocked, standby, untested, draft, review, all)")
 	findCmd.Flags().StringVarP(&findRevset, "revisions", "r", "", "Custom revset to filter tasks")
 	findCmd.Flags().StringVar(&findFormat, "format", "text", "Output format: text or json")
 	rootCmd.AddCommand(findCmd)
-	findCmd.ValidArgsFunction = completeFindFlag
+	_ = findCmd.RegisterFlagCompletionFunc("status", completeFindFlag)
 }
 
 func findJSON(repos []workspace.Repo, workspaceRoot, revset string, isMulti bool) error {

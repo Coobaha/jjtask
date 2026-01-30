@@ -1,14 +1,17 @@
 ---
 description: Transform a revision description with sed
-argument-hint: <rev> <sed-expr>
+argument-hint: <sed-expr> [-r rev]
 allowed-tools:
  - Bash
+ - AskUserQuestion
+model: haiku
 ---
 
 <objective>
 Pipe a revision's description through sed and update it.
 
-Example: `jjtask desc-transform @ 's/foo/bar/'`
+Example: `jjtask desc-transform 's/foo/bar/'` (defaults to @)
+Example: `jjtask desc-transform 's/foo/bar/' -r xyz`
 </objective>
 
 <process>

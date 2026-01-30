@@ -1,0 +1,30 @@
+=== root ===
+# before
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask find
+migrated .jj-workspaces.yaml → .jjtask.toml
+cwd: . | repo: root
+
+=== frontend: jj -R ./frontend log ===
+@  qpvuntsm
+│
+~
+
+=== backend: jj -R ./backend log ===
+@  qpvuntsm
+│
+~
+
+=== root: jj -R . log ===
+@  qpvuntsm
+│  .jjtask.toml | 6 ++++++
+~  1 file changed, 6 insertions(+), 0 deletions(-)
+
+
+# after
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+

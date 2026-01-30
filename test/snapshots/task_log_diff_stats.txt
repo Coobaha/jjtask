@@ -1,3 +1,0 @@
-ID Test commit with changes
-testfile.txt | 1 +
-1 file changed, 1 insertion(+), 0 deletions(-)

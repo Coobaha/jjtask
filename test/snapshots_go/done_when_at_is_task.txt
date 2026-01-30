@@ -1,0 +1,42 @@
+# before
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create Task
+Created new commit kkmpptxz 7ec0743e (empty) [task:todo] Task
+Created new commit k (empty) [task:todo] Task
+
+# after
+○  kkmpptxz [task:todo] Task
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jj edit k
+Working copy  (@) now at: kkmpptxz 7ec0743e (empty) [task:todo] Task
+Parent commit (@-)      : qpvuntsm e8849ae1 (empty) (no description set)
+
+# wrote work.txt (7 bytes)
+
+# before
+@  kkmpptxz [task:todo] Task
+○  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask wip
+Working copy  (@) now at: kkmpptxz 07f0a638 [task:wip] Task
+Parent commit (@-)      : qpvuntsm e8849ae1 (empty) (no description set)
+
+# after
+@  kkmpptxz [task:wip] Task
+○  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask done
+Working copy  (@) now at: kkmpptxz abb7d888 [task:done] Task
+Parent commit (@-)      : qpvuntsm e8849ae1 (empty) (no description set)
+
+# after
+@  kkmpptxz [task:done] Task
+○  qpvuntsm
+◆  zzzzzzzz root() 00000000
+

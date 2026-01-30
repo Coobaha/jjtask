@@ -1,0 +1,48 @@
+# wrote base.txt (4 bytes)
+
+$ jj describe -m Base
+Working copy  (@) now at: qpvuntsm 7dea31c7 Base
+Parent commit (@-)      : zzzzzzzz 00000000 (empty) (no description set)
+
+$ jj new -m Working commit
+Working copy  (@) now at: kkmpptxz 367a79cf (empty) Working commit
+Parent commit (@-)      : qpvuntsm 7dea31c7 Base
+
+# wrote work.txt (7 bytes)
+
+$ jj status
+Working copy changes:
+A work.txt
+Working copy  (@) : kkmpptxz 91e440bd Working commit
+Parent commit (@-): qpvuntsm 7dea31c7 Base
+
+# before
+@  kkmpptxz Working commit
+○  qpvuntsm Base
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create --parent q Task
+Created new commit yqosqzyt 2b713f66 (empty) [task:todo] Task
+Created new commit y (empty) [task:todo] Task
+
+# after
+@  kkmpptxz Working commit
+│ ○  yqosqzyt [task:todo] Task
+├─╯
+○  qpvuntsm Base
+◆  zzzzzzzz root() 00000000
+
+$ jjtask wip y
+Rebased 1 commits to destination
+Working copy  (@) now at: kkmpptxz d9329cbd Working commit
+Parent commit (@-)      : qpvuntsm 7dea31c7 Base
+Parent commit (@-)      : yqosqzyt 78b187f6 (empty) [task:wip] Task
+
+# after
+@    kkmpptxz Working commit
+├─╮
+│ ○  yqosqzyt [task:wip] Task
+├─╯
+○  qpvuntsm Base
+◆  zzzzzzzz root() 00000000
+

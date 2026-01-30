@@ -73,7 +73,7 @@ func completeRevision(cmd *cobra.Command, args []string, toComplete string) ([]s
 	}
 
 	var completions []string
-	for _, line := range strings.Split(strings.TrimSpace(output), "\n") {
+	for line := range strings.SplitSeq(strings.TrimSpace(output), "\n") {
 		if line == "" {
 			continue
 		}
@@ -100,7 +100,7 @@ func completeTaskRevision(cmd *cobra.Command, args []string, toComplete string) 
 	}
 
 	var completions []string
-	for _, line := range strings.Split(strings.TrimSpace(output), "\n") {
+	for line := range strings.SplitSeq(strings.TrimSpace(output), "\n") {
 		if line == "" {
 			continue
 		}
@@ -116,7 +116,7 @@ func completeTaskRevision(cmd *cobra.Command, args []string, toComplete string) 
 }
 
 // completeTaskFlag provides completion for task flag values
-func completeTaskFlag(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+func completeTaskFlag(_cmd *cobra.Command, _args []string, _toComplete string) ([]string, cobra.ShellCompDirective) {
 	flags := []string{
 		"draft\tPlaceholder, needs specification",
 		"todo\tReady to work",

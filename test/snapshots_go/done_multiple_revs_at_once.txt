@@ -1,0 +1,92 @@
+# wrote base.txt (4 bytes)
+
+$ jj describe -m Base
+Working copy  (@) now at: qpvuntsm 7dea31c7 Base
+Parent commit (@-)      : zzzzzzzz 00000000 (empty) (no description set)
+
+# before
+@  qpvuntsm Base
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create Task A
+Created new commit zsuskuln ddccb27f (empty) [task:todo] Task A
+Created new commit zs (empty) [task:todo] Task A
+
+# after
+○  zsuskuln [task:todo] Task A
+@  qpvuntsm Base
+◆  zzzzzzzz root() 00000000
+
+$ jj edit zs
+Working copy  (@) now at: zsuskuln ddccb27f (empty) [task:todo] Task A
+Parent commit (@-)      : qpvuntsm 7dea31c7 Base
+
+# wrote a.txt (1 bytes)
+
+# before
+@  zsuskuln [task:todo] Task A
+○  qpvuntsm Base
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create Task B
+Created new commit yostqsxw e3f02a31 (empty) [task:todo] Task B
+Created new commit y (empty) [task:todo] Task B
+
+# after
+○  yostqsxw [task:todo] Task B
+@  zsuskuln [task:todo] Task A
+○  qpvuntsm Base
+◆  zzzzzzzz root() 00000000
+
+$ jj edit y
+Working copy  (@) now at: yostqsxw e3f02a31 (empty) [task:todo] Task B
+Parent commit (@-)      : zsuskuln 6f2c97de [task:todo] Task A
+
+# wrote b.txt (1 bytes)
+
+# before
+@  yostqsxw [task:todo] Task B
+○  zsuskuln [task:todo] Task A
+○  qpvuntsm Base
+◆  zzzzzzzz root() 00000000
+
+$ jjtask wip zs
+Rebased 1 descendant commits
+Working copy  (@) now at: yostqsxw b1e1890c [task:todo] Task B
+Parent commit (@-)      : zsuskuln 2c1ca4bf [task:wip] Task A
+
+# after
+@  yostqsxw [task:todo] Task B
+○  zsuskuln [task:wip] Task A
+○  qpvuntsm Base
+◆  zzzzzzzz root() 00000000
+
+$ jjtask wip y
+Working copy  (@) now at: yostqsxw 3b8a9058 [task:wip] Task B
+Parent commit (@-)      : zsuskuln 2c1ca4bf [task:wip] Task A
+
+# after
+@  yostqsxw [task:wip] Task B
+○  zsuskuln [task:wip] Task A
+○  qpvuntsm Base
+◆  zzzzzzzz root() 00000000
+
+$ jjtask done zs y
+
+⚠️  Working copy (@) has uncommitted changes:
+b.txt | 1 +
+1 file changed, 1 insertion(+), 0 deletions(-)
+Were any of these changes part of this task?
+
+Rebased 1 descendant commits
+Working copy  (@) now at: yostqsxw bafc6a23 [task:wip] Task B
+Parent commit (@-)      : zsuskuln f0c4b129 [task:done] Task A
+Working copy  (@) now at: yostqsxw 2a0e3dcc [task:done] Task B
+Parent commit (@-)      : zsuskuln f0c4b129 [task:done] Task A
+
+# after
+@  yostqsxw [task:done] Task B
+○  zsuskuln [task:done] Task A
+○  qpvuntsm Base
+◆  zzzzzzzz root() 00000000
+

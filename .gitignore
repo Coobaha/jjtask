@@ -49,3 +49,4 @@ bin/jjtask-go
 claude-plugin/bin/jjtask-go
 /jjtask
 tmp
+.dev-backup

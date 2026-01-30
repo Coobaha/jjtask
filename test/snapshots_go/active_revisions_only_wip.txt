@@ -1,0 +1,28 @@
+$ jjtask create Todo task
+Created new commit rlvkpnrz f8c57ce0 (empty) [task:todo] Todo task
+Created new commit r (empty) [task:todo] Todo task
+
+$ jjtask create --parent root() Wip task
+Created new commit kkmpptxz 73c72577 (empty) [task:todo] Wip task
+Created new commit k (empty) [task:todo] Wip task
+
+$ jjtask flag wip --rev k
+Tip: Consider using 'jjtask wip' or 'jjtask done' for the mega-merge workflow
+
+$ jjtask flag done --rev r
+
+⚠️  Task is empty - no changes to mark done
+If this is a planning-only task, this warning can be ignored.
+
+Tip: Consider using 'jjtask wip' or 'jjtask done' for the mega-merge workflow
+
+$ jjtask create --parent root() Another task
+Created new commit vruxwmqv 83be78aa (empty) [task:todo] Another task
+Created new commit v (empty) [task:todo] Another task
+
+$ jjtask wip v
+Rebuilding @ as merge of 2 active task(s)
+Working copy  (@) now at: znkkpsqq df07d306 (empty) (no description set)
+Parent commit (@-)      : vruxwmqv b4ae16eb (empty) [task:wip] Another task
+Parent commit (@-)      : kkmpptxz b51e6df5 (empty) [task:wip] Wip task
+

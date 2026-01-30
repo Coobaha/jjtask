@@ -1,0 +1,38 @@
+# before
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create Empty planning task
+Created new commit kkmpptxz 41634cf4 (empty) [task:todo] Empty planning task
+Created new commit k (empty) [task:todo] Empty planning task
+
+# after
+○  kkmpptxz [task:todo] Empty planning task
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask wip k
+Rebased 1 commits to destination
+Rebased 1 descendant commits
+Working copy  (@) now at: qpvuntsm ebcd0fc4 (empty) (no description set)
+Parent commit (@-)      : kkmpptxz 5beb15e2 (empty) [task:wip] Empty planning task
+
+# after
+@  qpvuntsm
+○  kkmpptxz [task:wip] Empty planning task
+◆  zzzzzzzz root() 00000000
+
+$ jjtask done k
+
+⚠️  Task is empty - no changes to mark done
+If this is a planning-only task, this warning can be ignored.
+
+Rebased 1 descendant commits
+Working copy  (@) now at: qpvuntsm 5e7e6331 (empty) (no description set)
+Parent commit (@-)      : kkmpptxz 84c1143e (empty) [task:done] Empty planning task
+
+# after
+@  qpvuntsm
+○  kkmpptxz [task:done] Empty planning task
+◆  zzzzzzzz root() 00000000
+

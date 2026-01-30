@@ -9,18 +9,24 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var batchDescRevset string
+
 var batchDescCmd = &cobra.Command{
-	Use:   "batch-desc <sed-expr> <revset>",
+	Use:   "batch-desc <sed-expr> --revset REVSET",
 	Short: "Transform multiple revision descriptions",
 	Long: `Apply a sed transformation to all revisions matching a revset.
 
 Examples:
-  jjtask batch-desc 's/old/new/' 'tasks_todo()'
-  jjtask batch-desc 's/WIP/DONE/' 'description(substring:"WIP")'`,
-	Args: cobra.ExactArgs(2),
+  jjtask batch-desc 's/old/new/' --revset 'tasks_todo()'
+  jjtask batch-desc 's/WIP/DONE/' -r 'description(substring:"WIP")'`,
+	Args: cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		sedExpr := args[0]
-		revset := args[1]
+		revset := batchDescRevset
+
+		if revset == "" {
+			return fmt.Errorf("--revset is required")
+		}
 
 		// Get matching revisions
 		out, err := client.Query("log", "-r", revset, "--no-graph", "-T", "change_id.shortest() ++ \"\\n\"")
@@ -80,22 +86,15 @@ Examples:
 
 func init() {
 	rootCmd.AddCommand(batchDescCmd)
-	// Second argument is a revset, which could be a revision or revset expression
-	batchDescCmd.ValidArgsFunction = func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
-		if len(args) >= 2 {
-			return nil, cobra.ShellCompDirectiveNoFileComp
-		}
-		if len(args) == 1 {
-			// Second arg is revset - offer common revset aliases
-			return []string{
-				"tasks()",
-				"tasks_pending()",
-				"tasks_todo()",
-				"tasks_wip()",
-				"tasks_done()",
-			}, cobra.ShellCompDirectiveNoFileComp
-		}
-		// First arg is sed expression - no completion
-		return nil, cobra.ShellCompDirectiveNoFileComp
-	}
+	batchDescCmd.Flags().StringVarP(&batchDescRevset, "revset", "r", "", "revset to match revisions (required)")
+	_ = batchDescCmd.MarkFlagRequired("revset")
+	_ = batchDescCmd.RegisterFlagCompletionFunc("revset", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+		return []string{
+			"tasks()",
+			"tasks_pending()",
+			"tasks_todo()",
+			"tasks_wip()",
+			"tasks_done()",
+		}, cobra.ShellCompDirectiveNoFileComp
+	})
 }

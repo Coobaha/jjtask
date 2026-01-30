@@ -1,0 +1,16 @@
+# before
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create Test title
+Created new commit kkmpptxz 8f4e8450 (empty) [task:todo] Test title
+Created new commit k (empty) [task:todo] Test title
+
+# after
+○  kkmpptxz [task:todo] Test title
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask desc-transform --rev k nonexistent-cmd-xyz
+Error: command "nonexistent-cmd-xyz" not found
+

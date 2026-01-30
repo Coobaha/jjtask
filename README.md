@@ -24,18 +24,18 @@ claude plugin install jjtask@jjtask-marketplace
 
 ## Workflow
 
-jjtask enables a two-role workflow: Planners create task specifications, Workers implement them.
+jjtask uses a "mega-merge" model: @ is always a merge of all active work.
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                     PLANNING PHASE                          │
 ├─────────────────────────────────────────────────────────────┤
 │  1. Create task DAG with specifications                     │
-│     jj task create @ "Add user auth" "## Requirements..."   │
-│     jj task parallel @ "Frontend" "Backend" "Tests"         │
+│     jjtask create "Add user auth" "## Requirements..."      │
+│     jjtask parallel "Frontend" "Backend" "Tests"            │
 │                                                             │
 │  2. Review structure                                        │
-│     jj task find                                            │
+│     jjtask find                                             │
 │                                                             │
 │  Result: Empty revisions with [task:todo] flags             │
 └─────────────────────────────────────────────────────────────┘
@@ -44,27 +44,26 @@ jjtask enables a two-role workflow: Planners create task specifications, Workers
 ┌─────────────────────────────────────────────────────────────┐
 │                     WORKING PHASE                           │
 ├─────────────────────────────────────────────────────────────┤
-│  3. Pick a task and start working                           │
-│     jj edit <task-id>                                       │
-│     jj task flag @ wip                                      │
+│  3. Start working on a task (@ becomes merge of active)     │
+│     jjtask wip <task-id>                                    │
 │                                                             │
-│  4. Implement according to specs in description             │
+│  4. Work directly in @ - changes go to merged tasks         │
 │     # write code, make changes                              │
 │                                                             │
-│  5. Review specs, check acceptance criteria                 │
-│     jj task next                    # shows current specs   │
+│  5. Complete task when ALL criteria met                     │
+│     jjtask done                                             │
 │                                                             │
-│  6. Transition when ALL criteria met                        │
-│     jj task next --mark-as done <next-task>                 │
+│  6. Ready to push? Flatten the merge                        │
+│     jjtask squash                                           │
 └─────────────────────────────────────────────────────────────┘
 ```
 
 ### Workflow Rules
 
 - Never mark `done` unless ALL acceptance criteria pass
-- Use `blocked`, `review`, or `untested` if criteria aren't fully met
+- Use `jjtask flag blocked/review/untested` if criteria aren't fully met
 - Task descriptions are specifications - follow them exactly
-- `jj task next` shows specs and available transitions
+- @ is always a merge of all WIP + done-with-content tasks
 
 ## Task Flags
 
@@ -116,24 +115,24 @@ The `label("task " ++ task_flag, ...)` applies colors defined in jjtask's `[colo
 
 ## Commands
 
-All commands work as `jj task <cmd>` (requires alias in config) or `jjtask <cmd>` directly:
-
 | Command | Action |
 | --- | --- |
-| `jj task find [flag]` | List tasks by status |
-| `jj task create [parent] <title> [desc]` | Create task revision |
-| `jj task flag <rev> <flag>` | Update task status |
-| `jj task next [--mark-as flag] [rev]` | Review current task, transition to next |
-| `jj task finalize [rev]` | Strip [task:*] for final commit |
-| `jj task parallel <parent> <t1> <t2>...` | Create sibling tasks |
-| `jj task hoist` | Rebase pending tasks to @- |
-| `jj task show-desc [rev]` | Print revision description |
-| `jj task checkpoint [name]` | Create named checkpoint |
+| `jjtask create <title> [desc]` | Create task revision |
+| `jjtask wip [task]` | Mark WIP, rebuild @ as merge |
+| `jjtask done [task]` | Mark done (stays in @ if content) |
+| `jjtask drop <task>` | Remove from @ (mark standby) |
+| `jjtask squash` | Flatten @ merge for push |
+| `jjtask find [-s status]` | List tasks by status |
+| `jjtask flag <status> [-r rev]` | Update task status |
+| `jjtask parallel <t1> <t2>...` | Create sibling tasks |
+| `jjtask show-desc [-r rev]` | Print revision description |
+| `jjtask checkpoint [name]` | Create named checkpoint |
 
 Multi-repo support (requires `.jj-workspaces.yaml`):
+
 | Command | Action |
 | --- | --- |
-| `jj task all <cmd> [args]` | Run jj command across repos |
+| `jjtask all <cmd> [args]` | Run jj command across repos |
 
 ## Installation
 
@@ -182,7 +181,7 @@ repos:
     name: backend
 ```
 
-Then `jj task find` and `jj task all` operate across all repos.
+Then `jjtask find` and `jjtask all` operate across all repos.
 
 ## Writing Good Task Descriptions
 
