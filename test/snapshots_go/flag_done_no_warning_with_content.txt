@@ -1,0 +1,40 @@
+# before
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create Task with work
+Created new commit kkmpptxz eb44a192 (empty) [task:todo] Task with work
+Created new commit k (empty) [task:todo] Task with work
+
+# after
+○  kkmpptxz [task:todo] Task with work
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jj edit k
+Working copy  (@) now at: kkmpptxz eb44a192 (empty) [task:todo] Task with work
+Parent commit (@-)      : qpvuntsm e8849ae1 (empty) (no description set)
+
+# wrote workfile.txt (11 bytes)
+
+$ jj status
+Working copy changes:
+A workfile.txt
+Working copy  (@) : kkmpptxz ccdddada [task:todo] Task with work
+Parent commit (@-): qpvuntsm e8849ae1 (empty) (no description set)
+
+# before
+@  kkmpptxz [task:todo] Task with work
+○  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask flag done
+Working copy  (@) now at: kkmpptxz 7c2cee8b [task:done] Task with work
+Parent commit (@-)      : qpvuntsm e8849ae1 (empty) (no description set)
+Tip: Consider using 'jjtask wip' or 'jjtask done' for the mega-merge workflow
+
+# after
+@  kkmpptxz [task:done] Task with work
+○  qpvuntsm
+◆  zzzzzzzz root() 00000000
+

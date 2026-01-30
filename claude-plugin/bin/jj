@@ -115,10 +115,10 @@ case "$1" in
         fi
         ;;
     rebase)
-        show_hint rebase "AGENT HINT: For hoisting pending tasks to @: jjtask hoist"
+        show_hint rebase "AGENT HINT: Use 'jjtask wip TASK' to start working (rebuilds @ as merge)"
         ;;
     edit)
-        show_hint edit "AGENT HINT: For task transitions: jjtask next --mark-as STATUS REV"
+        show_hint edit "AGENT HINT: Use 'jjtask wip TASK' to start, 'jjtask done TASK' to complete"
         ;;
 esac
 

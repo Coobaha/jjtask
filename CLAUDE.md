@@ -12,10 +12,9 @@ jjtask is a portable Claude Code plugin for structured task management using JJ 
 jjtask/
 ├── cmd/jjtask/             # Go CLI source
 │   ├── main.go             # Entry point
-│   └── cmd/                # Cobra commands (find, create, flag, next, etc.)
+│   └── cmd/                # Cobra commands (wip, done, drop, squash, find, create, etc.)
 ├── internal/               # Go internal packages
 │   ├── jj/                 # JJ interaction layer
-│   ├── parallel/           # Parallel agent session management
 │   └── workspace/          # Multi-workspace support
 ├── bin/
 │   ├── jjtask              # Dispatcher (downloads/runs jjtask-go)
@@ -31,25 +30,23 @@ jjtask/
 ├── shell/fish/
 │   ├── completions/        # Generated fish completions
 │   └── functions/          # jjtask-env.fish shell setup
-├── test/                   # Integration tests and snapshots
+├── test/                   # Test snapshots (test/snapshots_go/)
 ├── .github/workflows/      # CI and release automation
 ├── install.sh              # Installer (builds Go, symlinks, completions)
-├── test.sh                 # Integration test runner
 └── .mise.toml              # Toolchain and tasks (Go 1.25, golangci-lint)
 ```
 
 ## Multi-Workspace Support
 
-For projects with multiple jj repos, create `.jj-workspaces.yaml` in project root:
+For projects with multiple jj repos, create `.jjtask.toml` in project root:
 
-```yaml
-repos:
-  - path: frontend
-    name: frontend
-  - path: backend
-    name: backend
-  - path: .
-    name: root
+```toml
+[workspaces]
+repos = [
+  { path = "frontend", name = "frontend" },
+  { path = "backend", name = "backend" },
+  { path = ".", name = "root" },
+]
 ```
 
 Scripts auto-detect this config and operate across all repos:
@@ -81,10 +78,11 @@ mise run dev       # Dev setup: symlinks + completions
 
 Manual workflow:
 ```bash
-go build -o bin/jjtask-go ./cmd/jjtask   # Build
-./test.sh                                 # Test
-./install.sh                              # Install to ~/.local/bin
-./install.sh --uninstall                  # Remove
+go build -o bin/jjtask-go ./cmd/jjtask            # Build
+go test ./cmd/jjtask/cmd/...                      # Test all
+go test ./cmd/jjtask/cmd/... -v -run TestCreate   # Filter tests
+./install.sh                                      # Install to ~/.local/bin
+./install.sh --uninstall                          # Remove
 ```
 
 ## Releasing
@@ -105,8 +103,8 @@ This will:
 - Go code in `cmd/jjtask/cmd/` for commands, `internal/` for shared packages
 - Use Cobra for CLI structure with persistent flags for JJ globals (-R, --quiet)
 - Prefer `change_id.shortest()` over `change_id.short()` in templates
-- Integration tests use snapshot comparison (test/snapshots/)
-- Update snapshots with `SNAPSHOT_UPDATE=1 ./test.sh`
+- Integration tests use snapshot comparison (test/snapshots_go/)
+- Update snapshots with `SNAPSHOT_UPDATE=1 go test ./cmd/jjtask/cmd/...`
 
 ## Creating Skills/Commands
 

@@ -3,6 +3,8 @@ description: Show revision description
 argument-hint: [rev]
 allowed-tools:
  - Bash
+ - AskUserQuestion
+model: haiku
 ---
 
 <objective>

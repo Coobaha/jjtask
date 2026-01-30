@@ -1,3 +1,0 @@
-Working copy at: ID HASH (empty) [task:todo] Parent task
-Parent commit: ID HASH (empty) (no description set)
-Parallel session stopped

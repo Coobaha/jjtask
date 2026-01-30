@@ -1,0 +1,51 @@
+# before
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create Task A
+Created new commit kkmpptxz daaa8cef (empty) [task:todo] Task A
+Created new commit k (empty) [task:todo] Task A
+
+# after
+○  kkmpptxz [task:todo] Task A
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create --parent root() Task B
+Created new commit yqosqzyt 290e22cf (empty) [task:todo] Task B
+Created new commit y (empty) [task:todo] Task B
+
+# after
+○  kkmpptxz [task:todo] Task A
+@  qpvuntsm
+│ ○  yqosqzyt [task:todo] Task B
+├─╯
+◆  zzzzzzzz root() 00000000
+
+$ jjtask wip k
+Rebased 1 commits to destination
+Rebased 1 descendant commits
+Working copy  (@) now at: qpvuntsm 4e58855f (empty) (no description set)
+Parent commit (@-)      : kkmpptxz 353aaa62 (empty) [task:wip] Task A
+
+# after
+@  qpvuntsm
+○  kkmpptxz [task:wip] Task A
+│ ○  yqosqzyt [task:todo] Task B
+├─╯
+◆  zzzzzzzz root() 00000000
+
+$ jjtask wip y
+Rebased 1 commits to destination
+Working copy  (@) now at: qpvuntsm 06f2d53c (empty) (no description set)
+Parent commit (@-)      : kkmpptxz 353aaa62 (empty) [task:wip] Task A
+Parent commit (@-)      : yqosqzyt cd7e51c3 (empty) [task:wip] Task B
+
+# after
+@    qpvuntsm
+├─╮
+│ ○  yqosqzyt [task:wip] Task B
+○ │  kkmpptxz [task:wip] Task A
+├─╯
+◆  zzzzzzzz root() 00000000
+

@@ -1,0 +1,35 @@
+# before
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create Single task
+Created new commit kkmpptxz 3f1c5e81 (empty) [task:todo] Single task
+Created new commit k (empty) [task:todo] Single task
+
+# after
+○  kkmpptxz [task:todo] Single task
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask wip k
+Rebased 1 commits to destination
+Rebased 1 descendant commits
+Working copy  (@) now at: qpvuntsm 263ce74e (empty) (no description set)
+Parent commit (@-)      : kkmpptxz 8ca0c0b6 (empty) [task:wip] Single task
+
+# after
+@  qpvuntsm
+○  kkmpptxz [task:wip] Single task
+◆  zzzzzzzz root() 00000000
+
+$ jjtask find
+@  qpvuntsm
+○  kkmpptxz [task:wip] Single task
+│
+~
+
+# after
+@  qpvuntsm
+○  kkmpptxz [task:wip] Single task
+◆  zzzzzzzz root() 00000000
+

@@ -1,0 +1,60 @@
+# before
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create Parent task
+Created new commit kkmpptxz 63208f86 (empty) [task:todo] Parent task
+Created new commit k (empty) [task:todo] Parent task
+
+# after
+○  kkmpptxz [task:todo] Parent task
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create --parent k Child task
+Created new commit yqosqzyt 70b2bafa (empty) [task:todo] Child task
+Created new commit y (empty) [task:todo] Child task
+
+# after
+○  yqosqzyt [task:todo] Child task
+○  kkmpptxz [task:todo] Parent task
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jj log -r children(k) & tasks() --no-graph -T change_id.shortest()
+y
+$ jjtask flag done --rev k
+
+⚠️  Task has 1 pending children:
+  • y [task:todo] Child task
+Consider marking children done first, or they may be orphaned.
+
+
+⚠️  Task is empty - no changes to mark done
+If this is a planning-only task, this warning can be ignored.
+
+Rebased 1 descendant commits
+Tip: Consider using 'jjtask wip' or 'jjtask done' for the mega-merge workflow
+
+# after
+○  yqosqzyt [task:todo] Child task
+○  kkmpptxz [task:done] Parent task
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask flag wip --rev y
+
+⚠️  Ancestor task is already done:
+  • k [task:done] Parent task
+Starting work below done tasks is unusual. Consider:
+  • Rebase as sibling: jj rebase -s y -d <done-task>~
+  • Or squash done tasks: jjtask squash -r <done-task>
+
+Tip: Consider using 'jjtask wip' or 'jjtask done' for the mega-merge workflow
+
+# after
+○  yqosqzyt [task:wip] Child task
+○  kkmpptxz [task:done] Parent task
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+

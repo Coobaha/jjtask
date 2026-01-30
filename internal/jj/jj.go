@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"slices"
 	"strings"
 
 	"golang.org/x/term"
@@ -238,4 +239,130 @@ func SetupEnv() {
 			_ = os.Setenv("JJ_CONFIG", confDir)
 		}
 	}
+}
+
+// GetActiveRevisions returns change IDs of WIP tasks only
+func (c *Client) GetActiveRevisions() ([]string, error) {
+	out, err := c.Query("log", "-r", "tasks_wip()", "--no-graph", "-T", `change_id.shortest() ++ "\n"`)
+	if err != nil {
+		return nil, err
+	}
+	out = strings.TrimSpace(out)
+	if out == "" {
+		return nil, nil
+	}
+	return strings.Split(out, "\n"), nil
+}
+
+// isRootChangeID checks if a change ID is the root commit (all z's)
+func isRootChangeID(id string) bool {
+	for _, c := range id {
+		if c != 'z' {
+			return false
+		}
+	}
+	return true
+}
+
+// GetParents returns the parent change IDs of a revision
+func (c *Client) GetParents(rev string) ([]string, error) {
+	out, err := c.Query("log", "-r", "parents("+rev+")", "--no-graph", "-T", `change_id.shortest() ++ "\n"`)
+	if err != nil {
+		return nil, err
+	}
+	out = strings.TrimSpace(out)
+	if out == "" {
+		return nil, nil
+	}
+	return strings.Split(out, "\n"), nil
+}
+
+// RemoveFromMerge removes a revision from @'s parents, preserving @ content
+func (c *Client) RemoveFromMerge(task string) error {
+	parents, err := c.GetParents("@")
+	if err != nil {
+		return fmt.Errorf("getting parents: %w", err)
+	}
+
+	// Filter out the task and root
+	var remaining []string
+	for _, p := range parents {
+		if p != task && !isRootChangeID(p) {
+			remaining = append(remaining, p)
+		}
+	}
+
+	if len(remaining) == 0 {
+		return nil
+	}
+
+	if len(remaining) == 1 {
+		if err := c.Run("squash", "--into", remaining[0], "--keep-emptied"); err != nil {
+			return fmt.Errorf("squashing into parent: %w", err)
+		}
+		return c.Run("edit", remaining[0])
+	}
+
+	// Multiple parents - rebase @ onto remaining parents
+	args := []string{"rebase", "-r", "@"}
+	for _, p := range remaining {
+		args = append(args, "-o", p)
+	}
+	return c.Run(args...)
+}
+
+// IsAncestorOf checks if rev is an ancestor of target
+func (c *Client) IsAncestorOf(rev, target string) (bool, error) {
+	out, err := c.Query("log", "-r", rev+"::"+target, "--no-graph", "-T", "change_id.shortest()", "--limit", "1")
+	if err != nil {
+		// Empty result means not an ancestor
+		return false, nil
+	}
+	return strings.TrimSpace(out) != "", nil
+}
+
+// AddToMerge adds a revision as a new parent of @, preserving @ content
+func (c *Client) AddToMerge(task string) error {
+	// Get @ change ID to check if task IS @
+	atID, err := c.Query("log", "-r", "@", "--no-graph", "-T", "change_id.shortest()")
+	if err != nil {
+		return fmt.Errorf("getting @ ID: %w", err)
+	}
+	atID = strings.TrimSpace(atID)
+
+	// If task is @ itself, nothing to do
+	if task == atID {
+		return nil
+	}
+
+	parents, err := c.GetParents("@")
+	if err != nil {
+		return fmt.Errorf("getting parents: %w", err)
+	}
+
+	// Check if already a parent
+	if slices.Contains(parents, task) {
+		return nil
+	}
+
+	// Filter out root commit - can't merge with root
+	var validParents []string
+	for _, p := range parents {
+		if !isRootChangeID(p) {
+			validParents = append(validParents, p)
+		}
+	}
+
+	if len(validParents) == 0 {
+		// No real parents - just rebase onto task
+		return c.Run("rebase", "-r", "@", "-o", task)
+	}
+
+	// Rebase @ onto existing parents + new task
+	args := []string{"rebase", "-r", "@"}
+	for _, p := range validParents {
+		args = append(args, "-o", p)
+	}
+	args = append(args, "-o", task)
+	return c.Run(args...)
 }

@@ -1,0 +1,19 @@
+# before
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create Short title ## Context
+This is a longer description
+with multiple lines
+Created new commit kkmpptxz 38edb650 (empty) [task:todo] Short title
+Created new commit k (empty) [task:todo] Short title
+
+# after
+○  kkmpptxz [task:todo] Short title
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jj log -r k --no-graph -T task_log
+kkmpptxz [task:todo] Short title [desc:5L]
+   This is a longer description with multiple lines
+

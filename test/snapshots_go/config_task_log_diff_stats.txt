@@ -1,0 +1,12 @@
+# wrote testfile.txt (12 bytes)
+
+$ jj describe -m Test commit with changes
+Working copy  (@) now at: qpvuntsm 986cd85f Test commit with changes
+Parent commit (@-)      : zzzzzzzz 00000000 (empty) (no description set)
+
+$ jj log -r @ --no-graph -T task_log
+qpvuntsm Test commit with changes
+testfile.txt | 1 +
+1 file changed, 1 insertion(+), 0 deletions(-)
+
+

@@ -1,0 +1,40 @@
+# before
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create WIP task
+Created new commit kkmpptxz 58a1a4cf (empty) [task:todo] WIP task
+Created new commit k (empty) [task:todo] WIP task
+
+# after
+○  kkmpptxz [task:todo] WIP task
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask flag wip --rev k
+Tip: Consider using 'jjtask wip' or 'jjtask done' for the mega-merge workflow
+
+# after
+○  kkmpptxz [task:wip] WIP task
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jj edit k
+Working copy  (@) now at: kkmpptxz a42f3902 (empty) [task:wip] WIP task
+Parent commit (@-)      : qpvuntsm e8849ae1 (empty) (no description set)
+
+# before
+@  kkmpptxz [task:wip] WIP task
+○  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create Child of wip
+Created new commit kpqxywon 52f6d4ba (empty) [task:todo] Child of wip
+Created new commit kp (empty) [task:todo] Child of wip
+
+# after
+○  kpqxywon [task:todo] Child of wip
+@  kkmpptxz [task:wip] WIP task
+○  qpvuntsm
+◆  zzzzzzzz root() 00000000
+

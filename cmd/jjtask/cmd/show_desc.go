@@ -10,7 +10,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var showDescFormat string
+var (
+	showDescFormat string
+	showDescRev    string
+)
 
 type ShowDescOutput struct {
 	Revision    string `json:"revision"`
@@ -21,17 +24,18 @@ type ShowDescOutput struct {
 }
 
 var showDescCmd = &cobra.Command{
-	Use:   "show-desc [rev]",
+	Use:   "show-desc [REV]",
 	Short: "Print revision description",
 	Long: `Print the description for a revision (default @).
 
 Examples:
   jjtask show-desc
-  jjtask show-desc mxyz`,
+  jjtask show-desc mxyz
+  jjtask show-desc -r mxyz`,
 	Args: cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		rev := "@"
-		if len(args) == 1 {
+		rev := showDescRev
+		if len(args) > 0 {
 			rev = args[0]
 		}
 
@@ -76,7 +80,8 @@ Examples:
 }
 
 func init() {
+	showDescCmd.Flags().StringVarP(&showDescRev, "rev", "r", "@", "revision to show")
 	showDescCmd.Flags().StringVar(&showDescFormat, "format", "text", "Output format: text or json")
 	rootCmd.AddCommand(showDescCmd)
-	showDescCmd.ValidArgsFunction = completeRevision
+	_ = showDescCmd.RegisterFlagCompletionFunc("rev", completeRevision)
 }

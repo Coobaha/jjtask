@@ -1,0 +1,25 @@
+# before
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create Empty task
+Created new commit kkmpptxz e61999f2 (empty) [task:todo] Empty task
+Created new commit k (empty) [task:todo] Empty task
+
+# after
+○  kkmpptxz [task:todo] Empty task
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask flag done --rev k
+
+⚠️  Task is empty - no changes to mark done
+If this is a planning-only task, this warning can be ignored.
+
+Tip: Consider using 'jjtask wip' or 'jjtask done' for the mega-merge workflow
+
+# after
+○  kkmpptxz [task:done] Empty task
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+

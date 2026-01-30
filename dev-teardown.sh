@@ -1,77 +1,50 @@
 #!/usr/bin/env bash
-# Development teardown: restore original ~/.config/claude/ setup
+# Development teardown: restore original plugin setup
 # Usage: ./dev-teardown.sh
 #
-# Removes symlinks created by dev-setup.sh and restores backups.
+# Restores installed_plugins.json from backup.
 
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-CLAUDE_DIR="${HOME}/.config/claude"
-BACKUP_DIR="${SCRIPT_DIR}/.dev-backup"
+PLUGINS_JSON="${HOME}/.claude/plugins/installed_plugins.json"
+BACKUP_FILE="${SCRIPT_DIR}/.dev-backup/installed_plugins.json"
 
 echo "Tearing down jjtask development environment..."
 echo ""
 
-# Helper to remove symlink and restore backup
-unlink_item() {
-  local dst="$1"
-  local backup_path="$BACKUP_DIR/$(basename "$dst")"
-
-  if [[ -L "$dst" ]]; then
-    rm "$dst"
-    echo "  Removed symlink: $dst"
-
-    if [[ -e "$backup_path" ]]; then
-      mv "$backup_path" "$dst"
-      echo "  Restored backup: $backup_path -> $dst"
-    fi
-  fi
-}
-
-# 1. Unlink bin scripts
-AGENT_BIN="${CLAUDE_DIR}/.agent-space/profile/bin"
-if [[ -d "$AGENT_BIN" ]]; then
-  echo "Unlinking bin scripts from $AGENT_BIN/"
-  for script in "$SCRIPT_DIR/bin"/*; do
-    [[ -f "$script" ]] || continue
-    name=$(basename "$script")
-    unlink_item "$AGENT_BIN/$name"
-  done
+if [[ ! -f "$BACKUP_FILE" ]]; then
+  echo "No backup found at $BACKUP_FILE"
+  echo "Nothing to restore."
+  exit 0
 fi
 
-# 2. Unlink config
-JJ_CONFIG_DIR="${CLAUDE_DIR}/.agent-space/jj-config"
-echo ""
-echo "Unlinking config from $JJ_CONFIG_DIR/"
-unlink_item "$JJ_CONFIG_DIR/10-jjtask.toml"
+echo "Restoring installed_plugins.json from backup..."
+cp "$BACKUP_FILE" "$PLUGINS_JSON"
+rm "$BACKUP_FILE"
 
-# 3. Unlink commands
-COMMANDS_DIR="${CLAUDE_DIR}/commands/jjtask"
-if [[ -d "$COMMANDS_DIR" ]]; then
+# Clean up agent-space symlinks
+AGENT_JJ_CONFIG="${HOME}/.config/claude/.agent-space/jj-config"
+if [[ -d "$AGENT_JJ_CONFIG" ]]; then
   echo ""
-  echo "Unlinking commands from $COMMANDS_DIR/"
-  for cmd in "$SCRIPT_DIR/commands"/*.md; do
-    [[ -f "$cmd" ]] || continue
-    name=$(basename "$cmd")
-    unlink_item "$COMMANDS_DIR/$name"
+  echo "Removing JJ config symlinks from agent-space..."
+  for cfg in "$SCRIPT_DIR/config/conf.d"/*.toml; do
+    [[ -f "$cfg" ]] || continue
+    name=$(basename "$cfg")
+    cfg_link="$AGENT_JJ_CONFIG/$name"
+    if [[ -L "$cfg_link" ]]; then
+      rm "$cfg_link"
+      echo "  Removed: $name"
+    fi
   done
-  # Remove directory if empty
-  rmdir "$COMMANDS_DIR" 2>/dev/null || true
 fi
-
-# 4. Unlink skills
-SKILLS_DIR="${CLAUDE_DIR}/skills"
-echo ""
-echo "Unlinking skills from $SKILLS_DIR/"
-unlink_item "$SKILLS_DIR/jjtask"
-unlink_item "$SKILLS_DIR/jj-dev"
 
 # Clean up backup directory if empty
+BACKUP_DIR="${SCRIPT_DIR}/.dev-backup"
 if [[ -d "$BACKUP_DIR" ]] && [[ -z "$(ls -A "$BACKUP_DIR" 2>/dev/null)" ]]; then
   rmdir "$BACKUP_DIR"
 fi
 
 echo ""
 echo "Development teardown complete!"
-echo "Original ~/.config/claude/ setup restored."
+echo "Plugin now points to cached marketplace version."

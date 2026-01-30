@@ -1,10 +1,11 @@
 ---
 description: Create a new todo task revision
-argument-hint: [parent] <title> [description]
+argument-hint: <title> [description] [--parent REV] [--chain] [--draft]
 allowed-tools:
  - Skill(jjtask)
  - Read
  - Bash
+ - AskUserQuestion
 ---
 
 <objective>
@@ -31,9 +32,11 @@ BEFORE CREATING - you MUST:
 THEN create:
 
 3. Run: `jjtask create $ARGUMENTS`
-   - One arg: `jjtask create "title"` (parent = @)
-   - Two args: `jjtask create parent "title"`
-   - Three args: `jjtask create parent "title" "description"`
+   - Basic: `jjtask create "title"` (parent = @)
+   - With description: `jjtask create "title" "description"`
+   - Custom parent: `jjtask create --parent xyz "title"`
+   - Auto-chain: `jjtask create --chain "title"` (chains from deepest pending)
+   - Draft: `jjtask create --draft "title"`
 </process>
 
 <success_criteria>

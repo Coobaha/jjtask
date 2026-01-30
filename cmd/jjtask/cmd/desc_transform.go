@@ -9,8 +9,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var descTransformRev string
+
 var descTransformCmd = &cobra.Command{
-	Use:   "desc-transform <rev> <sed-expr|command...>",
+	Use:   "desc-transform <sed-expr|command...> [--rev REV]",
 	Short: "Transform revision description",
 	Long: `Transform a revision description through a command.
 
@@ -18,13 +20,13 @@ If a single argument starting with 's/' is provided, sed is assumed.
 Otherwise, the command and arguments are executed directly.
 
 Examples:
-  jjtask desc-transform @ 's/foo/bar/'
-  jjtask desc-transform @ sed 's/foo/bar/'
-  jjtask desc-transform mxyz awk '/^##/{print}'`,
-	Args: cobra.MinimumNArgs(2),
+  jjtask desc-transform 's/foo/bar/'
+  jjtask desc-transform sed 's/foo/bar/' --rev mxyz
+  jjtask desc-transform awk '/^##/{print}'`,
+	Args: cobra.MinimumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		rev := args[0]
-		cmdArgs := args[1:]
+		rev := descTransformRev
+		cmdArgs := args
 
 		// If single argument starting with s/, assume sed
 		if len(cmdArgs) == 1 && strings.HasPrefix(cmdArgs[0], "s/") {
@@ -69,5 +71,6 @@ Examples:
 
 func init() {
 	rootCmd.AddCommand(descTransformCmd)
-	descTransformCmd.ValidArgsFunction = completeRevision
+	descTransformCmd.Flags().StringVarP(&descTransformRev, "rev", "r", "@", "revision to transform")
+	_ = descTransformCmd.RegisterFlagCompletionFunc("rev", completeRevision)
 }

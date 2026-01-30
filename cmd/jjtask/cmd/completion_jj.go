@@ -127,10 +127,7 @@ complete -c jj -n "__fish_jj_needs_command" -f -a "task" -d 'Task management (jj
 complete -c jj -n "__fish_jj_using_task; and __fish_jj_task_needs_subcommand" -f -a "find" -d 'List tasks'
 complete -c jj -n "__fish_jj_using_task; and __fish_jj_task_needs_subcommand" -f -a "create" -d 'Create a new task'
 complete -c jj -n "__fish_jj_using_task; and __fish_jj_task_needs_subcommand" -f -a "flag" -d 'Update task status'
-complete -c jj -n "__fish_jj_using_task; and __fish_jj_task_needs_subcommand" -f -a "next" -d 'Review/transition tasks'
-complete -c jj -n "__fish_jj_using_task; and __fish_jj_task_needs_subcommand" -f -a "finalize" -d 'Strip task prefix'
 complete -c jj -n "__fish_jj_using_task; and __fish_jj_task_needs_subcommand" -f -a "parallel" -d 'Create sibling tasks'
-complete -c jj -n "__fish_jj_using_task; and __fish_jj_task_needs_subcommand" -f -a "hoist" -d 'Rebase pending tasks'
 complete -c jj -n "__fish_jj_using_task; and __fish_jj_task_needs_subcommand" -f -a "show-desc" -d 'Print description'
 complete -c jj -n "__fish_jj_using_task; and __fish_jj_task_needs_subcommand" -f -a "desc-transform" -d 'Transform description'
 complete -c jj -n "__fish_jj_using_task; and __fish_jj_task_needs_subcommand" -f -a "batch-desc" -d 'Transform multiple'
@@ -159,13 +156,6 @@ complete -c jj -n "__fish_jj_task_using_subcommand flag" -f -a "standby" -d 'Awa
 complete -c jj -n "__fish_jj_task_using_subcommand flag" -f -a "untested" -d 'Needs testing'
 complete -c jj -n "__fish_jj_task_using_subcommand flag" -f -a "review" -d 'Needs review'
 complete -c jj -n "__fish_jj_task_using_subcommand flag" -f -a "done" -d 'Complete'
-
-# next: --mark-as flag and revision
-complete -c jj -n "__fish_jj_task_using_subcommand next" -l mark-as -f -a "draft todo wip blocked standby untested review done" -d 'Mark with status'
-complete -c jj -n "__fish_jj_task_using_subcommand next" -f -a "(__fish_jjtask_complete_task_revisions)"
-
-# finalize: task revision
-complete -c jj -n "__fish_jj_task_using_subcommand finalize" -f -a "(__fish_jjtask_complete_task_revisions)"
 
 # show-desc: any revision
 complete -c jj -n "__fish_jj_task_using_subcommand show-desc" -f -a "(__fish_jjtask_complete_revisions)"

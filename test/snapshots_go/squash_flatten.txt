@@ -1,0 +1,104 @@
+# wrote base.txt (4 bytes)
+
+$ jj describe -m Base commit
+Working copy  (@) now at: qpvuntsm 25687f26 Base commit
+Parent commit (@-)      : zzzzzzzz 00000000 (empty) (no description set)
+
+# before
+@  qpvuntsm Base commit
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create Task A
+Created new commit zsuskuln df92532a (empty) [task:todo] Task A
+Created new commit zs (empty) [task:todo] Task A
+
+# after
+○  zsuskuln [task:todo] Task A
+@  qpvuntsm Base commit
+◆  zzzzzzzz root() 00000000
+
+$ jj edit zs
+Working copy  (@) now at: zsuskuln df92532a (empty) [task:todo] Task A
+Parent commit (@-)      : qpvuntsm 25687f26 Base commit
+
+# wrote file_a.txt (9 bytes)
+
+$ jj status
+Working copy changes:
+A file_a.txt
+Working copy  (@) : zsuskuln ae2c5e9e [task:todo] Task A
+Parent commit (@-): qpvuntsm 25687f26 Base commit
+
+# before
+@  zsuskuln [task:todo] Task A
+○  qpvuntsm Base commit
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create --parent q Task B
+Created new commit kpqxywon b297fedb (empty) [task:todo] Task B
+Created new commit k (empty) [task:todo] Task B
+
+# after
+@  zsuskuln [task:todo] Task A
+│ ○  kpqxywon [task:todo] Task B
+├─╯
+○  qpvuntsm Base commit
+◆  zzzzzzzz root() 00000000
+
+$ jj edit k
+Working copy  (@) now at: kpqxywon b297fedb (empty) [task:todo] Task B
+Parent commit (@-)      : qpvuntsm 25687f26 Base commit
+Added 0 files, modified 0 files, removed 1 files
+
+# wrote file_b.txt (9 bytes)
+
+$ jj status
+Working copy changes:
+A file_b.txt
+Working copy  (@) : kpqxywon b888b2a8 [task:todo] Task B
+Parent commit (@-): qpvuntsm 25687f26 Base commit
+
+# before
+@  kpqxywon [task:todo] Task B
+│ ○  zsuskuln [task:todo] Task A
+├─╯
+○  qpvuntsm Base commit
+◆  zzzzzzzz root() 00000000
+
+$ jjtask wip zs
+Rebased 1 commits to destination
+Working copy  (@) now at: kpqxywon d2eceaa9 [task:todo] Task B
+Parent commit (@-)      : qpvuntsm 25687f26 Base commit
+Parent commit (@-)      : zsuskuln 71a32632 [task:wip] Task A
+Added 1 files, modified 0 files, removed 0 files
+
+# after
+@    kpqxywon [task:todo] Task B
+├─╮
+│ ○  zsuskuln [task:wip] Task A
+├─╯
+○  qpvuntsm Base commit
+◆  zzzzzzzz root() 00000000
+
+$ jjtask wip k
+Working copy  (@) now at: kpqxywon 9c642b41 [task:wip] Task B
+Parent commit (@-)      : qpvuntsm 25687f26 Base commit
+Parent commit (@-)      : zsuskuln 71a32632 [task:wip] Task A
+
+# after
+@    kpqxywon [task:wip] Task B
+├─╮
+│ ○  zsuskuln [task:wip] Task A
+├─╯
+○  qpvuntsm Base commit
+◆  zzzzzzzz root() 00000000
+
+$ jjtask squash
+Working copy  (@) now at: kpqxywon 4ab8214a Squashed tasks:
+Parent commit (@-)      : zzzzzzzz 00000000 (empty) (no description set)
+Squashed 2 tasks into linear commit
+
+# after
+@  kpqxywon Squashed tasks:
+◆  zzzzzzzz root() 00000000
+

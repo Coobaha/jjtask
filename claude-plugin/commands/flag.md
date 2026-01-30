@@ -1,15 +1,22 @@
 ---
 description: Update task flag on a revision
-argument-hint: <rev> <flag>
+argument-hint: <flag> [-r rev]
 allowed-tools:
  - Skill(jjtask)
  - Bash
+ - AskUserQuestion
+model: haiku
 ---
 
 <objective>
 Change the task status flag on a revision.
 
-Flags: draft, todo, wip, blocked, standby, untested, review, done
+For common transitions, use dedicated commands:
+- `jjtask wip TASK` - mark WIP and rebuild @ as merge
+- `jjtask done TASK` - mark done (stays in @ if has content)
+- `jjtask drop TASK` - remove from @ without completing
+
+For other flags (draft, blocked, standby, untested, review), use this command.
 
 Part of `/jjtask` - run that skill for full workflow context.
 </objective>

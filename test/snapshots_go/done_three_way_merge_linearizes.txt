@@ -1,0 +1,128 @@
+# wrote base.txt (4 bytes)
+
+$ jj describe -m Base
+Working copy  (@) now at: qpvuntsm 7dea31c7 Base
+Parent commit (@-)      : zzzzzzzz 00000000 (empty) (no description set)
+
+# before
+@  qpvuntsm Base
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create --parent q Task A
+Created new commit mzvwutvl 7bcc46b5 (empty) [task:todo] Task A
+Created new commit m (empty) [task:todo] Task A
+
+# after
+○  mzvwutvl [task:todo] Task A
+@  qpvuntsm Base
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create --parent q Task B
+Created new commit yostqsxw f0a1d0a8 (empty) [task:todo] Task B
+Created new commit y (empty) [task:todo] Task B
+
+# after
+○  yostqsxw [task:todo] Task B
+│ ○  mzvwutvl [task:todo] Task A
+├─╯
+@  qpvuntsm Base
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create --parent q Task C
+Created new commit wqnwkozp 3ecfbba1 (empty) [task:todo] Task C
+Created new commit w (empty) [task:todo] Task C
+
+# after
+○  wqnwkozp [task:todo] Task C
+│ ○  yostqsxw [task:todo] Task B
+├─╯
+│ ○  mzvwutvl [task:todo] Task A
+├─╯
+@  qpvuntsm Base
+◆  zzzzzzzz root() 00000000
+
+$ jjtask wip m
+Rebased 1 commits to destination
+Rebased 3 descendant commits
+Working copy  (@) now at: qpvuntsm c2b80b78 Base
+Parent commit (@-)      : mzvwutvl 8cbfb6a0 (empty) [task:wip] Task A
+
+# after
+@  qpvuntsm Base
+○  mzvwutvl [task:wip] Task A
+│ ○  wqnwkozp [task:todo] Task C
+├─╯
+│ ○  yostqsxw [task:todo] Task B
+├─╯
+◆  zzzzzzzz root() 00000000
+
+$ jjtask wip y
+Rebased 1 commits to destination
+Working copy  (@) now at: qpvuntsm 15b1b5d4 Base
+Parent commit (@-)      : mzvwutvl 8cbfb6a0 (empty) [task:wip] Task A
+Parent commit (@-)      : yostqsxw af6bd08c (empty) [task:wip] Task B
+
+# after
+@    qpvuntsm Base
+├─╮
+│ ○  yostqsxw [task:wip] Task B
+○ │  mzvwutvl [task:wip] Task A
+├─╯
+│ ○  wqnwkozp [task:todo] Task C
+├─╯
+◆  zzzzzzzz root() 00000000
+
+$ jjtask wip w
+Rebased 1 commits to destination
+Working copy  (@) now at: qpvuntsm 5c96f2f6 Base
+Parent commit (@-)      : yostqsxw af6bd08c (empty) [task:wip] Task B
+Parent commit (@-)      : mzvwutvl 8cbfb6a0 (empty) [task:wip] Task A
+Parent commit (@-)      : wqnwkozp 85fbb7db (empty) [task:wip] Task C
+
+# after
+@      qpvuntsm Base
+├─┬─╮
+│ │ ○  wqnwkozp [task:wip] Task C
+│ ○ │  mzvwutvl [task:wip] Task A
+│ ├─╯
+○ │  yostqsxw [task:wip] Task B
+├─╯
+◆  zzzzzzzz root() 00000000
+
+$ jjtask done m
+
+⚠️  Task is empty - no changes to mark done
+If this is a planning-only task, this warning can be ignored.
+
+
+⚠️  Working copy (@) has uncommitted changes:
+base.txt | 1 +
+1 file changed, 1 insertion(+), 0 deletions(-)
+Were any of these changes part of this task?
+
+Rebased 1 descendant commits
+Working copy  (@) now at: qpvuntsm d6661b6a Base
+Parent commit (@-)      : yostqsxw af6bd08c (empty) [task:wip] Task B
+Parent commit (@-)      : mzvwutvl 194d71a7 (empty) [task:done] Task A
+Parent commit (@-)      : wqnwkozp 85fbb7db (empty) [task:wip] Task C
+Rebased 2 commits to destination
+Working copy  (@) now at: qpvuntsm 30cc3572 Base
+Parent commit (@-)      : yostqsxw af6bd08c (empty) [task:wip] Task B
+Parent commit (@-)      : mzvwutvl 194d71a7 (empty) [task:done] Task A
+Parent commit (@-)      : wqnwkozp e7855d52 (empty) [task:wip] Task C
+Rebased 2 commits to destination
+Working copy  (@) now at: qpvuntsm a09017bd Base
+Parent commit (@-)      : yostqsxw 59718c21 (empty) [task:wip] Task B
+Parent commit (@-)      : mzvwutvl 194d71a7 (empty) [task:done] Task A
+Parent commit (@-)      : wqnwkozp e7855d52 (empty) [task:wip] Task C
+Rebased 1 commits to destination
+Working copy  (@) now at: qpvuntsm 1e59a31d Base
+Parent commit (@-)      : yostqsxw 59718c21 (empty) [task:wip] Task B
+
+# after
+@  qpvuntsm Base
+○  yostqsxw [task:wip] Task B
+○  wqnwkozp [task:wip] Task C
+○  mzvwutvl [task:done] Task A
+◆  zzzzzzzz root() 00000000
+

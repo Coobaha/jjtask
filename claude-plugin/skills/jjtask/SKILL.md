@@ -14,25 +14,24 @@ Manage a DAG of empty revisions as TODO markers representing tasks. Revision des
 <quick_start>
 
 ```bash
-# 1. Plan: Create TODO chain (parent required - ensures clean DAG)
-jjtask create @ "Add user validation" "Check email format and password strength"
-# Created: abc123 as child of @
+# 1. Plan: Create TODO tasks
+jjtask create "Add user validation" "Check email format and password strength"
+jjtask create --chain "Add validation tests" "Test valid/invalid emails and passwords"
 
-jjtask create abc123 "Add validation tests" "Test valid/invalid emails and passwords"
-# Created: def456 as child of abc123 -> forms chain: @ -> abc123 -> def456
+# 2. Start working on a task
+jjtask wip abc123
+# Single task: @ becomes the task (jj edit)
+# Multiple WIP: @ becomes merge commit
 
-# 2. Start working
-jj edit abc123
-jjtask flag @ wip
+# 3. Work and complete
+# For single task: work directly in @
+# For merge: jj edit TASK to work in specific task
+jjtask done abc123
+# Task linearizes into ancestry (becomes ancestor of remaining WIP)
 
-# ... implement validation ...
-
-# 3. Review specs and move to next
-jjtask next
-# Shows current specs and available next tasks
-
-# 4. Mark done and continue
-jjtask next --mark-as done def456   # Marks abc123 done, starts def456
+# 4. Flatten for push
+jjtask squash
+# Squashes all merged task content into linear commit
 ```
 </quick_start>
 
@@ -41,7 +40,7 @@ jjtask next --mark-as done def456   # Marks abc123 done, starts def456
 - Status flags reflect actual task state
 - DAG shows clear priority (chained tasks) and parallelism (sibling tasks)
 - All acceptance criteria met before marking done
-- No orphaned tasks far from @
+- @ is always a merge of all WIP tasks
 </success_criteria>
 
 <status_flags>
@@ -60,9 +59,12 @@ jjtask next --mark-as done def456   # Marks abc123 done, starts def456
 Progression: `draft` -> `todo` -> `wip` -> `done`
 
 ```bash
-jjtask flag @ wip       # Start work
-jjtask flag @ untested  # Implementation done
-jjtask flag @ done      # Complete
+jjtask wip xyz        # Mark xyz as WIP, add as parent of @
+jjtask wip a b c      # Mark multiple as WIP
+jjtask done xyz       # Mark done, linearizes into ancestry
+jjtask done a b c     # Mark multiple as done
+jjtask drop xyz       # Remove from @ without completing
+jjtask flag review    # Other flags via generic command
 ```
 </status_flags>
 
@@ -72,21 +74,21 @@ Flag changes only update status. To modify description content:
 
 ```bash
 # Add completion notes when marking done
-jjtask flag @ done
-jj desc -r @ -m "$(jjtask show-desc @)
+jjtask done xyz
+jj desc -r xyz -m "$(jjtask show-desc -r xyz)
 
 ## Completion
 - What was done
 - Deviations from spec"
 
 # Check off acceptance criteria
-jjtask desc-transform @ 's/- \[ \] First criterion/- [x] First criterion/'
+jjtask desc-transform 's/- \[ \] First criterion/- [x] First criterion/'
 
 # Append a section
-jjtask desc-transform @ 's/$/\n\n## Notes\nAdditional context here/'
+jjtask desc-transform 's/$/\n\n## Notes\nAdditional context here/'
 
 # Batch update multiple tasks
-jjtask batch-desc 's/old-term/new-term/g' 'tasks_todo()'
+jjtask batch-desc 's/old-term/new-term/g' -r 'tasks_todo()'
 ```
 
 When to use what:
@@ -100,18 +102,21 @@ When to use what:
 
 ```bash
 jjtask find             # Pending tasks with DAG structure
-jjtask find todo        # Only [task:todo]
-jjtask find wip         # Only [task:wip]
-jjtask find done        # Only [task:done]
-jjtask find all         # All tasks including done
+jjtask find -s todo     # Only [task:todo]
+jjtask find -s wip      # Only [task:wip]
+jjtask find -s done     # Only [task:done]
+jjtask find -s all      # All tasks including done
 ```
 </finding_tasks>
 
 <parallel_tasks>
 
 ```bash
-# Create parallel branches
-jjtask parallel <parent-id> "Widget A" "Widget B" "Widget C"
+# Create parallel branches from @ (default parent)
+jjtask parallel "Widget A" "Widget B" "Widget C"
+
+# Or specify parent explicitly
+jjtask parallel --parent xyz123 "Widget A" "Widget B"
 
 # Merge point (all parents must complete)
 jj new --no-edit <A-id> <B-id> <C-id> -m "[task:todo] Integration\n\n..."
@@ -210,50 +215,59 @@ Parallelization opportunities:
 - Independent features under same parent -> good candidates for parallel agents
 
 Structural issues:
-- Orphaned tasks far from @ -> `jjtask hoist` or manual rebase
 - Done tasks with pending children -> children may be blocked
 - Draft tasks mixed with todo -> drafts need specs before work begins
 </dag_validation>
 
-<hoisting>
+<working_in_merge>
 
-When you make commits, tasks created earlier stay behind. Run `jjtask hoist` to move pending tasks up:
+When @ is a merge of multiple WIP tasks:
+
+**Recommended: Work directly in task branch**
+```bash
+jj edit task-a        # Switch to working in the task
+# make changes...
+jjtask wip task-a     # Rebuild merge to see combined state
+```
+
+**Alternative: Use absorb with explicit targets**
+```bash
+jj absorb --into 'tasks_wip()'  # Only route to WIP tasks
+```
+
+**Avoid bare `jj absorb`** - it may route changes to ancestor commits if you're editing lines not touched by your task branches.
+</working_in_merge>
+
+<squashing>
+
+After tasks are complete, flatten the merge for a clean push:
 
 ```bash
-jjtask hoist
-# Moves pending task roots to be children of @
+jjtask squash
+# Combines all merged task content into a single linear commit
+# Task descriptions become bullet points in commit message
 ```
-</hoisting>
-
-<finalizing>
-
-```bash
-# Strip [task:done] prefix for final commit
-jjtask finalize @
-```
-</finalizing>
+</squashing>
 
 <commands>
 
-| Command                             | Purpose                           |
-| ----------------------------------- | --------------------------------- |
-| `jjtask create PARENT TITLE [DESC]`    | Create TODO as child of PARENT    |
-| `jjtask parallel PARENT T1 T2...`      | Create parallel TODOs             |
-| `jjtask next [--mark-as STATUS] [REV]` | Review specs, optionally move     |
-| `jjtask flag REV FLAG`                 | Update status flag                |
-| `jjtask find [FLAG] [-r REVSET]`       | Find tasks (flags or custom revset)|
-| `jjtask hoist`                         | Rebase pending tasks to @         |
-| `jjtask finalize [REV]`                | Strip task prefix for final commit|
-| `jjtask show-desc [REV]`               | Print revision description        |
-| `jjtask desc-transform REV SED`        | Transform description with sed    |
-| `jjtask batch-desc SED REVSET`         | Transform multiple descriptions   |
-| `jjtask checkpoint [NAME]`             | Create named checkpoint           |
-| `jjtask all <cmd> [args]`              | Run jj command across all repos   |
-| `jjtask prime`                         | Output session context for hooks  |
-| `jjtask parallel-start [--mode] TASK`  | Start parallel agent session      |
-| `jjtask parallel-stop [TASK]`          | Stop parallel session             |
-| `jjtask parallel-status [TASK]`        | Show parallel session status      |
-| `jjtask agent-context ID`              | Get context for parallel agent    |
+| Command                                  | Purpose                            |
+| ---------------------------------------- | ---------------------------------- |
+| `jjtask create TITLE [-p REV] [--chain]` | Create TODO (direct child of @)    |
+| `jjtask wip [TASKS...]`                  | Mark WIP, add as parents of @      |
+| `jjtask done [TASKS...]`                 | Mark done, linearize into ancestry |
+| `jjtask drop TASKS... [--abandon]`       | Remove from @ (standby or abandon) |
+| `jjtask squash`                          | Flatten @ merge for push           |
+| `jjtask parallel T1 T2... [-p REV]`      | Create parallel TODOs              |
+| `jjtask flag STATUS [-r REV]`            | Update status flag (defaults to @) |
+| `jjtask find [-s STATUS] [-r REVSET]`    | Find tasks by status or revset     |
+| `jjtask show-desc [-r REV]`              | Print revision description         |
+| `jjtask desc-transform CMD [-r REV]`     | Transform description with command |
+| `jjtask batch-desc EXPR -r REVSET`       | Transform multiple descriptions    |
+| `jjtask checkpoint [-m MSG]`             | Create named checkpoint            |
+| `jjtask stale`                           | Find done tasks not in @'s ancestry|
+| `jjtask all <cmd> [args]`                | Run jj command across all repos    |
+| `jjtask prime`                           | Output session context for hooks   |
 </commands>
 
 <multi_repo>
@@ -273,40 +287,31 @@ Scripts show output grouped by repo. Use `jjtask all log` or `jjtask all diff` a
 
 <parallel_agents>
 
-Multiple Claude agents can work simultaneously on the same repo.
+Multiple Claude agents can work simultaneously using jj workspaces:
 
-Detecting parallel context - check `jjtask prime` output for "Parallel Session Active" section, or run:
 ```bash
-jjtask agent-context <your-agent-id>
+# Terminal 1: Agent working on task A
+jj workspace add .workspaces/agent-a --revision task-a
+cd .workspaces/agent-a
+# work...
+jjtask done  # Rebuilds this workspace's @
+
+# Terminal 2: Agent working on task B
+jj workspace add .workspaces/agent-b --revision task-b
+cd .workspaces/agent-b
+# work...
+jjtask done  # Rebuilds this workspace's @
+
+# Cleanup when done
+jj workspace forget agent-a
+rm -rf .workspaces/agent-a
 ```
 
-Rules for parallel work:
-1. ONLY modify files in your assignment - other files belong to other agents
-2. Check assignments: `jjtask parallel-status`
-3. Mark your task done when complete: `jjtask flag @ done`
-
-Shared mode (agents share @):
-- Your changes appear immediately to others
-- File discipline critical - stay in your assigned patterns
-- Conflicts possible if patterns overlap
-
-Workspace mode (isolated directories):
-- You have your own working copy in `.jjtask-workspaces/<agent>/`
-- Other agents can't affect your files
-- Complete isolation until session ends
-
-Commands:
-```bash
-jjtask agent-context <id>     # Your assignment and context
-jjtask parallel-status        # All agents' progress
-jjtask parallel-recover       # Fix workspace issues
-```
-
-See `references/parallel-agents.md` for full documentation.
+Each workspace has its own @ that mega-merge rebuilds independently.
+No special coordination needed - jj handles workspace isolation.
 </parallel_agents>
 
 <references>
-- `references/parallel-agents.md` - Multi-agent parallel execution
 - `references/batch-operations.md` - Batch description transformations
 - `references/command-syntax.md` - JJ command flag details
 </references>

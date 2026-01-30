@@ -1,0 +1,32 @@
+# before
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create Test title Test body content
+Created new commit kkmpptxz 74bfb50c (empty) [task:todo] Test title
+Created new commit k (empty) [task:todo] Test title
+
+# after
+○  kkmpptxz [task:todo] Test title
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jj edit k
+Working copy  (@) now at: kkmpptxz 74bfb50c (empty) [task:todo] Test title
+Parent commit (@-)      : qpvuntsm e8849ae1 (empty) (no description set)
+
+# before
+@  kkmpptxz [task:todo] Test title
+○  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask show-desc
+[task:todo] Test title
+
+Test body content
+
+# after
+@  kkmpptxz [task:todo] Test title
+○  qpvuntsm
+◆  zzzzzzzz root() 00000000
+

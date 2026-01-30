@@ -1,0 +1,46 @@
+=== root ===
+# before
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask all log -r @
+migrated .jj-workspaces.yaml → .jjtask.toml
+cwd: . | repo: root
+
+=== frontend: jj -R ./frontend log ===
+@  qpvuntsm test.user@example.com 2001-02-03 04:05:08 292b4cf8
+│  Frontend commit
+~
+
+=== backend: jj -R ./backend log ===
+@  qpvuntsm test.user@example.com 2001-02-03 04:05:08 b704ba43
+│  Backend commit
+~
+
+=== root: jj -R . log ===
+@  qpvuntsm test.user@example.com 2001-02-03 04:05:09 6d42bc2e
+│  (no description set)
+~
+
+
+# after
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+
+=== frontend ===
+# wrote file.txt (4 bytes)
+
+$ jj describe -m Frontend commit
+Working copy  (@) now at: qpvuntsm 292b4cf8 Frontend commit
+Parent commit (@-)      : zzzzzzzz 00000000 (empty) (no description set)
+
+
+=== backend ===
+# wrote file.txt (4 bytes)
+
+$ jj describe -m Backend commit
+Working copy  (@) now at: qpvuntsm b704ba43 Backend commit
+Parent commit (@-)      : zzzzzzzz 00000000 (empty) (no description set)
+
+

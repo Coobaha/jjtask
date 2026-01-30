@@ -1,0 +1,88 @@
+# wrote base.txt (4 bytes)
+
+$ jj describe -m Base
+Working copy  (@) now at: qpvuntsm 7dea31c7 Base
+Parent commit (@-)      : zzzzzzzz 00000000 (empty) (no description set)
+
+# before
+@  qpvuntsm Base
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create --parent q Task A
+Created new commit mzvwutvl 7bcc46b5 (empty) [task:todo] Task A
+Created new commit m (empty) [task:todo] Task A
+
+# after
+○  mzvwutvl [task:todo] Task A
+@  qpvuntsm Base
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create --parent q Task B
+Created new commit yostqsxw f0a1d0a8 (empty) [task:todo] Task B
+Created new commit y (empty) [task:todo] Task B
+
+# after
+○  yostqsxw [task:todo] Task B
+│ ○  mzvwutvl [task:todo] Task A
+├─╯
+@  qpvuntsm Base
+◆  zzzzzzzz root() 00000000
+
+$ jjtask wip m
+Rebased 1 commits to destination
+Rebased 2 descendant commits
+Working copy  (@) now at: qpvuntsm 07fb65b4 Base
+Parent commit (@-)      : mzvwutvl 667b29ad (empty) [task:wip] Task A
+
+# after
+@  qpvuntsm Base
+○  mzvwutvl [task:wip] Task A
+│ ○  yostqsxw [task:todo] Task B
+├─╯
+◆  zzzzzzzz root() 00000000
+
+$ jjtask wip y
+Rebased 1 commits to destination
+Working copy  (@) now at: qpvuntsm 83d9a821 Base
+Parent commit (@-)      : mzvwutvl 667b29ad (empty) [task:wip] Task A
+Parent commit (@-)      : yostqsxw c0a169e1 (empty) [task:wip] Task B
+
+# after
+@    qpvuntsm Base
+├─╮
+│ ○  yostqsxw [task:wip] Task B
+○ │  mzvwutvl [task:wip] Task A
+├─╯
+◆  zzzzzzzz root() 00000000
+
+# wrote merge_work.txt (13 bytes)
+
+$ jj status
+Working copy changes:
+A base.txt
+A merge_work.txt
+Working copy  (@) : qpvuntsm d904c296 Base
+Parent commit (@-): mzvwutvl 667b29ad (empty) [task:wip] Task A
+Parent commit (@-): yostqsxw c0a169e1 (empty) [task:wip] Task B
+
+$ jjtask drop m
+Rebased 1 descendant commits
+Working copy  (@) now at: qpvuntsm 48157a6c Base
+Parent commit (@-)      : mzvwutvl ff37996e (empty) [task:standby] Task A
+Parent commit (@-)      : yostqsxw c0a169e1 (empty) [task:wip] Task B
+Marked m as standby
+Rebased 1 descendant commits
+Working copy  (@) now at: qpvuntsm a46610db (empty) Base
+Parent commit (@-)      : mzvwutvl ff37996e (empty) [task:standby] Task A
+Parent commit (@-)      : yostqsxw c5357caa [task:wip] Task B
+Working copy  (@) now at: yostqsxw c5357caa [task:wip] Task B
+Parent commit (@-)      : zzzzzzzz 00000000 (empty) (no description set)
+
+# after
+○    qpvuntsm Base
+├─╮
+│ @  yostqsxw [task:wip] Task B
+○ │  mzvwutvl [task:standby] Task A
+├─╯
+◆  zzzzzzzz root() 00000000
+

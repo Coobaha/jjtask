@@ -1,0 +1,43 @@
+# before
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create Parent
+Created new commit kkmpptxz 6e748e86 (empty) [task:todo] Parent
+Created new commit k (empty) [task:todo] Parent
+
+# after
+○  kkmpptxz [task:todo] Parent
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create --parent k Child 1
+Created new commit yqosqzyt 9ea530b8 (empty) [task:todo] Child 1
+Created new commit y (empty) [task:todo] Child 1
+
+# after
+○  yqosqzyt [task:todo] Child 1
+○  kkmpptxz [task:todo] Parent
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create --parent k Child 2
+Created new commit znkkpsqq c8645e2f (empty) [task:todo] Child 2
+Created new commit zn (empty) [task:todo] Child 2
+
+# after
+○  znkkpsqq [task:todo] Child 2
+│ ○  yqosqzyt [task:todo] Child 1
+├─╯
+○  kkmpptxz [task:todo] Parent
+@  qpvuntsm
+◆  zzzzzzzz root() 00000000
+
+$ jj log -r description(substring:"Child 2") & tasks() --no-graph -T parents.map(|p| p.description().first_line()).join(",")
+[task:todo] Parent
+$ jj log -r children(k) & tasks() --no-graph
+znkkpsqq test.user@example.com 2001-02-03 04:05:16 c8645e2f
+(empty) [task:todo] Child 2
+yqosqzyt test.user@example.com 2001-02-03 04:05:13 9ea530b8
+(empty) [task:todo] Child 1
+
