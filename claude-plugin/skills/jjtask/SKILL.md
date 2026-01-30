@@ -253,7 +253,7 @@ jjtask squash
 
 | Command                                  | Purpose                            |
 | ---------------------------------------- | ---------------------------------- |
-| `jjtask create TITLE [-p REV] [--chain]` | Create TODO (direct child of @)    |
+| `jjtask create [PARENT] TITLE [DESC]`    | Create TODO (parent defaults to @) |
 | `jjtask wip [TASKS...]`                  | Mark WIP, add as parents of @      |
 | `jjtask done [TASKS...]`                 | Mark done, linearize into ancestry |
 | `jjtask drop TASKS... [--abandon]`       | Remove from @ (standby or abandon) |

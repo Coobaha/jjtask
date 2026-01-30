@@ -13,11 +13,11 @@ Created new commit k (empty) [task:todo] ROOT: CI/CD pipeline
 ◆  zzzzzzzz root() 00000000
 
 $ jjtask create --draft @ ROOT: Terraform modules
-Created new commit royxmykx 96216717 (empty) [task:draft] @
-Created new commit r (empty) [task:draft] @
+Created new commit royxmykx 5614f5db (empty) [task:draft] ROOT: Terraform modules
+Created new commit r (empty) [task:draft] ROOT: Terraform modules
 
 # after
-○  royxmykx [task:draft] @
+○  royxmykx [task:draft] ROOT: Terraform modules
 │ ○  kkmpptxz [task:todo] ROOT: CI/CD pipeline
 ├─╯
 @  qpvuntsm
@@ -29,7 +29,7 @@ Created new commit y (empty) [task:todo] ROOT: Integration tests
 
 # after
 ○  yostqsxw [task:todo] ROOT: Integration tests
-│ ○  royxmykx [task:draft] @
+│ ○  royxmykx [task:draft] ROOT: Terraform modules
 ├─╯
 │ ○  kkmpptxz [task:todo] ROOT: CI/CD pipeline
 ├─╯
@@ -45,8 +45,8 @@ cwd: . | repo: root
 │
 ~
 
-○  royxmykx [task:draft] @
-│     FE: Dark mode toggle
+○  royxmykx [task:draft] FE: Dark mode toggle
+│
 ~
 
 ○  kkmpptxz [task:todo] FE: Auth login page
@@ -58,8 +58,8 @@ cwd: . | repo: root
 │
 ~
 
-○  royxmykx [task:draft] @
-│     BE: GraphQL schema
+○  royxmykx [task:draft] BE: GraphQL schema
+│
 ~
 
 ○  kkmpptxz [task:todo] BE: User API endpoints
@@ -71,8 +71,8 @@ cwd: . | repo: root
 │
 ~
 
-○  royxmykx [task:draft] @
-│     ROOT: Terraform modules
+○  royxmykx [task:draft] ROOT: Terraform modules
+│
 ~
 
 ○  kkmpptxz [task:todo] ROOT: CI/CD pipeline
@@ -82,7 +82,7 @@ cwd: . | repo: root
 
 # after
 ○  yostqsxw [task:todo] ROOT: Integration tests
-│ ○  royxmykx [task:draft] @
+│ ○  royxmykx [task:draft] ROOT: Terraform modules
 ├─╯
 │ ○  kkmpptxz [task:todo] ROOT: CI/CD pipeline
 ├─╯
@@ -105,11 +105,11 @@ Created new commit k (empty) [task:todo] FE: Auth login page
 ◆  zzzzzzzz root() 00000000
 
 $ jjtask create --draft @ FE: Dark mode toggle
-Created new commit royxmykx d37fb595 (empty) [task:draft] @
-Created new commit r (empty) [task:draft] @
+Created new commit royxmykx 02a7ada2 (empty) [task:draft] FE: Dark mode toggle
+Created new commit r (empty) [task:draft] FE: Dark mode toggle
 
 # after
-○  royxmykx [task:draft] @
+○  royxmykx [task:draft] FE: Dark mode toggle
 │ ○  kkmpptxz [task:todo] FE: Auth login page
 ├─╯
 @  qpvuntsm
@@ -121,7 +121,7 @@ Created new commit y (empty) [task:todo] FE: Error boundaries
 
 # after
 ○  yostqsxw [task:todo] FE: Error boundaries
-│ ○  royxmykx [task:draft] @
+│ ○  royxmykx [task:draft] FE: Dark mode toggle
 ├─╯
 │ ○  kkmpptxz [task:todo] FE: Auth login page
 ├─╯
@@ -144,11 +144,11 @@ Created new commit k (empty) [task:todo] BE: User API endpoints
 ◆  zzzzzzzz root() 00000000
 
 $ jjtask create --draft @ BE: GraphQL schema
-Created new commit royxmykx 516f5850 (empty) [task:draft] @
-Created new commit r (empty) [task:draft] @
+Created new commit royxmykx 9549472c (empty) [task:draft] BE: GraphQL schema
+Created new commit r (empty) [task:draft] BE: GraphQL schema
 
 # after
-○  royxmykx [task:draft] @
+○  royxmykx [task:draft] BE: GraphQL schema
 │ ○  kkmpptxz [task:todo] BE: User API endpoints
 ├─╯
 @  qpvuntsm
@@ -160,7 +160,7 @@ Created new commit y (empty) [task:todo] BE: Background jobs
 
 # after
 ○  yostqsxw [task:todo] BE: Background jobs
-│ ○  royxmykx [task:draft] @
+│ ○  royxmykx [task:draft] BE: GraphQL schema
 ├─╯
 │ ○  kkmpptxz [task:todo] BE: User API endpoints
 ├─╯

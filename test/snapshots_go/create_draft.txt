@@ -3,21 +3,21 @@
 ◆  zzzzzzzz root() 00000000
 
 $ jjtask create --draft @ Draft task
-Created new commit kkmpptxz 3027c57a (empty) [task:draft] @
-Created new commit k (empty) [task:draft] @
+Created new commit kkmpptxz e0d38e82 (empty) [task:draft] Draft task
+Created new commit k (empty) [task:draft] Draft task
 
 # after
-○  kkmpptxz [task:draft] @
+○  kkmpptxz [task:draft] Draft task
 @  qpvuntsm
 ◆  zzzzzzzz root() 00000000
 
 $ jjtask find --status all
-○  kkmpptxz [task:draft] @
-│     Draft task
+○  kkmpptxz [task:draft] Draft task
+│
 ~
 
 # after
-○  kkmpptxz [task:draft] @
+○  kkmpptxz [task:draft] Draft task
 @  qpvuntsm
 ◆  zzzzzzzz root() 00000000
 

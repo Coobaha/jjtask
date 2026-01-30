@@ -14,19 +14,20 @@ var (
 )
 
 var createCmd = &cobra.Command{
-	Use:   "create <title> [description]",
+	Use:   "create [parent] <title> [description]",
 	Short: "Create a new task revision",
-	Long: `Create a new task revision as direct child of @ (or --parent REV).
+	Long: `Create a new task revision as direct child of @ (or specified parent).
 
 By default, creates a direct child of @. Use --chain to auto-chain from
 the deepest pending descendant instead.
 
 Examples:
   jjtask create "Fix bug"                      # direct child of @
-  jjtask create --parent xyz "Fix bug"         # direct child of xyz
+  jjtask create xyz "Fix bug"                  # direct child of xyz
+  jjtask create @ "Fix bug" "Description"      # explicit @ with description
   jjtask create --chain "Next step"            # chain from deepest pending
   jjtask create --draft "Future work"          # draft task`,
-	Args: cobra.RangeArgs(1, 2),
+	Args: cobra.RangeArgs(1, 3),
 	RunE: runCreate,
 }
 
@@ -39,15 +40,34 @@ func init() {
 }
 
 func runCreate(cmd *cobra.Command, args []string) error {
-	title := args[0]
-	desc := ""
-	if len(args) >= 2 {
-		desc = args[1]
+	var title, desc, parent string
+
+	// Parse args: [parent] <title> [description]
+	// Heuristic: if first arg looks like a revset (short alphanumeric, @, or contains revision chars),
+	// treat it as parent. Otherwise it's the title.
+	switch len(args) {
+	case 1:
+		title = args[0]
+	case 2:
+		if looksLikeRevset(args[0]) {
+			parent = args[0]
+			title = args[1]
+		} else {
+			title = args[0]
+			desc = args[1]
+		}
+	case 3:
+		parent = args[0]
+		title = args[1]
+		desc = args[2]
 	}
 
-	parent := "@"
+	// --parent flag overrides positional
 	if createParent != "" {
 		parent = createParent
+	}
+	if parent == "" {
+		parent = "@"
 	}
 
 	// Check if @ is a WIP task when using explicit parent (not @)
@@ -92,6 +112,23 @@ func runCreate(cmd *cobra.Command, args []string) error {
 	}
 
 	return nil
+}
+
+// looksLikeRevset returns true if s looks like a jj revision specifier rather than a task title
+func looksLikeRevset(s string) bool {
+	if s == "@" || s == "@-" || strings.HasPrefix(s, "@-") {
+		return true
+	}
+	// Short alphanumeric strings (1-12 chars, lowercase letters and numbers only) are likely change IDs
+	if len(s) >= 1 && len(s) <= 12 {
+		for _, c := range s {
+			if (c < 'a' || c > 'z') && (c < '0' || c > '9') {
+				return false
+			}
+		}
+		return true
+	}
+	return false
 }
 
 // findDeepestPendingDescendant finds the deepest pending task descendant of rev
