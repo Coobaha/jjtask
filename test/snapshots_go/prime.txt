@@ -12,9 +12,9 @@ Task flags: draft → todo → wip → done (also: blocked, standby, untested, r
 tasks(), tasks_pending(), tasks_todo(), tasks_wip(), tasks_done(), tasks_blocked()
 
 ### Commands (all support -R, --quiet, etc.)
-jjtask create TITLE [-p REV]         Create task as child of @ (or REV)
+jjtask create [PARENT] TITLE [DESC]  Create task (parent defaults to @)
 jjtask wip [TASKS...]                Mark WIP, add as parents of @
-jjtask done [TASKS...]               Mark done, linearize into ancestry
+jjtask done [TASKS...]               Mark done, rebase on top of work
 jjtask drop TASKS... [--abandon]     Remove from @ (standby or abandon)
 jjtask squash                        Flatten @ merge for push
 jjtask find [-s STATUS] [-r REVSET]  List tasks (status: todo/wip/done/all)
@@ -30,7 +30,7 @@ jjtask all CMD [ARGS]                Run jj CMD across workspaces
 1. `jjtask create 'task'`        # Plan tasks
 2. `jjtask wip TASK`             # Start (single=edit, multi=merge)
 3. `jj edit TASK` to work        # Work directly in task branch
-4. `jjtask done`                 # Complete, linearizes into ancestry
+4. `jjtask done`                 # Complete, rebases on top of work
 5. `jjtask squash`               # Flatten for push
 
 Key: @ is merge of WIP tasks. Work in task branches directly.

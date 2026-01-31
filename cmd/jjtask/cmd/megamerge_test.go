@@ -610,3 +610,307 @@ func TestDoneSingleParentNoLinearization(t *testing.T) {
 		t.Errorf("@ parent should be task %s, got: %s", taskID, parentOut)
 	}
 }
+
+func TestDoneMegaMergeWithWorkCommit(t *testing.T) {
+	// Scenario: Mega-merge has task commits + work commits as parents.
+	// When marking tasks done, work commits should remain as the base,
+	// not be rebased onto task commits.
+	//
+	// Starting state:
+	//   @    (merge working copy)
+	//   ├─ taskA [task:wip]  (empty task)
+	//   ├─ taskB [task:wip]  (empty task)
+	//   └─ work3 (work commit with content)
+	//      └─ work2
+	//         └─ work1
+	//            └─ base
+	//
+	// After `jjtask done taskA taskB`:
+	//   @
+	//   └─ work3 (unchanged)
+	//      └─ work2
+	//         └─ work1
+	//            └─ taskB [task:done]
+	//               └─ taskA [task:done]
+	//                  └─ base
+	//
+	// The done tasks should linearize into the ancestry of the work branch,
+	// not cause work commits to be rebased onto tasks.
+	t.Parallel()
+	repo := SetupTestRepo(t)
+
+	// Create base
+	repo.WriteFile("base.txt", "base")
+	repo.Run("jj", "describe", "-m", "Base commit")
+	baseID := strings.TrimSpace(repo.runSilent("jj", "log", "-r", "@", "--no-graph", "-T", "change_id.shortest()"))
+
+	// Create work commits on top of base
+	repo.Run("jj", "new", "-m", "Work commit 1")
+	repo.WriteFile("work1.txt", "work 1")
+	repo.Run("jj", "new", "-m", "Work commit 2")
+	repo.WriteFile("work2.txt", "work 2")
+	repo.Run("jj", "new", "-m", "Work commit 3")
+	repo.WriteFile("work3.txt", "work 3")
+	work3ID := strings.TrimSpace(repo.runSilent("jj", "log", "-r", "@", "--no-graph", "-T", "change_id.shortest()"))
+
+	// Create task commits as siblings of work branch (children of base)
+	repo.Run("jjtask", "create", "--parent", baseID, "Task A")
+	taskA := strings.TrimSpace(repo.runSilent("jj", "log", "-r", `tasks() & description(substring:"Task A")`,
+		"--no-graph", "-T", "change_id.shortest()"))
+
+	repo.Run("jjtask", "create", "--parent", baseID, "Task B")
+	taskB := strings.TrimSpace(repo.runSilent("jj", "log", "-r", `tasks() & description(substring:"Task B")`,
+		"--no-graph", "-T", "change_id.shortest()"))
+
+	// Go back to work3 and mark tasks as WIP to create mega-merge
+	repo.Run("jj", "edit", work3ID)
+	repo.Run("jj", "new") // Create new @ on top of work3
+	repo.Run("jjtask", "wip", taskA)
+	repo.Run("jjtask", "wip", taskB)
+
+	// Verify we have a 3-way merge: work3, taskA, taskB
+	parentOut := repo.runSilent("jj", "log", "-r", "parents(@)", "--no-graph", "-T", `change_id.shortest() ++ "\n"`)
+	parentCount := len(strings.Split(strings.TrimSpace(parentOut), "\n"))
+	if parentCount < 3 {
+		t.Fatalf("expected 3-way merge, got %d parents", parentCount)
+	}
+
+	// Mark both tasks done
+	repo.Run("jjtask", "done", taskA, taskB)
+
+	// After done:
+	// - @ should have single parent (linearized)
+	// - Tasks should be ON TOP of work (tasks are newer work)
+	// - Work1-2-3 chain should remain intact
+	// - Result: work1 → work2 → work3 → taskA → taskB → @
+
+	// Check @ has single parent (linearized)
+	parentOut = repo.runSilent("jj", "log", "-r", "parents(@)", "--no-graph", "-T", `change_id.shortest() ++ "\n"`)
+	lines := strings.Split(strings.TrimSpace(parentOut), "\n")
+	var nonEmpty []string
+	for _, line := range lines {
+		if strings.TrimSpace(line) != "" {
+			nonEmpty = append(nonEmpty, line)
+		}
+	}
+	if len(nonEmpty) != 1 {
+		t.Errorf("expected single parent after linearization, got %d: %v", len(nonEmpty), nonEmpty)
+	}
+
+	// The parent of @ should be a done task (tasks are on top)
+	atParent := strings.TrimSpace(nonEmpty[0])
+	atParentDesc := repo.runSilent("jj", "log", "-r", atParent, "--no-graph", "-T", "description")
+	if !strings.Contains(atParentDesc, "[task:done]") {
+		t.Errorf("@ parent should be a done task, got: %s", atParentDesc)
+	}
+
+	// Work1-2-3 chain should remain intact (work2 is parent of work3)
+	work3Parents := repo.runSilent("jj", "log", "-r", "parents("+work3ID+")", "--no-graph", "-T", "description")
+	if !strings.Contains(work3Parents, "Work commit 2") {
+		t.Errorf("work3 parent should still be work2, got: %s", work3Parents)
+	}
+
+	// Work3 should be ancestor of tasks (tasks on top of work)
+	ancestorCheck := repo.runSilent("jj", "log", "-r", work3ID+"::"+taskA, "--no-graph", "-T", "change_id.shortest()")
+	if !strings.Contains(ancestorCheck, work3ID) {
+		t.Errorf("work3 should be ancestor of taskA")
+	}
+
+	// Check for conflicts - there should be none
+	status := repo.runSilent("jj", "log", "-r", "@", "-T", `if(conflict, "CONFLICT", "ok")`)
+	if strings.Contains(status, "CONFLICT") {
+		t.Error("@ should not have conflicts after done")
+	}
+}
+
+func TestDoneMegaMergeWithTaskContent(t *testing.T) {
+	// Scenario: Mega-merge has task with actual content + work commits.
+	// The task has changes that should be preserved and end up on top of work.
+	//
+	// Starting state:
+	//   @    (merge working copy)
+	//   ├─ taskA [task:wip] with task_a.txt
+	//   └─ work2 (work commit)
+	//      └─ work1
+	//
+	// After `jjtask done taskA`:
+	//   @
+	//   └─ taskA [task:done] with task_a.txt (content preserved)
+	//      └─ work2
+	//         └─ work1
+	t.Parallel()
+	repo := SetupTestRepo(t)
+
+	// Create base
+	repo.WriteFile("base.txt", "base")
+	repo.Run("jj", "describe", "-m", "Base commit")
+	baseID := strings.TrimSpace(repo.runSilent("jj", "log", "-r", "@", "--no-graph", "-T", "change_id.shortest()"))
+
+	// Create work commits
+	repo.Run("jj", "new", "-m", "Work commit 1")
+	repo.WriteFile("work1.txt", "work 1")
+	repo.Run("jj", "new", "-m", "Work commit 2")
+	repo.WriteFile("work2.txt", "work 2")
+	work2ID := strings.TrimSpace(repo.runSilent("jj", "log", "-r", "@", "--no-graph", "-T", "change_id.shortest()"))
+
+	// Create task with content as sibling of work branch
+	repo.Run("jjtask", "create", "--parent", baseID, "Task A with content")
+	taskA := strings.TrimSpace(repo.runSilent("jj", "log", "-r", `tasks() & description(substring:"Task A")`,
+		"--no-graph", "-T", "change_id.shortest()"))
+
+	// Add content to task
+	repo.Run("jj", "edit", taskA)
+	repo.WriteFile("task_a.txt", "task A content")
+	repo.Run("jj", "status") // snapshot
+
+	// Go back to work2 and create mega-merge with task
+	repo.Run("jj", "edit", work2ID)
+	repo.Run("jj", "new")
+	repo.Run("jjtask", "wip", taskA)
+
+	// Verify merge
+	parentOut := repo.runSilent("jj", "log", "-r", "parents(@)", "--no-graph", "-T", `change_id.shortest() ++ "\n"`)
+	parentCount := len(strings.Split(strings.TrimSpace(parentOut), "\n"))
+	if parentCount < 2 {
+		t.Fatalf("expected 2-way merge, got %d parents", parentCount)
+	}
+
+	// Mark task done
+	repo.Run("jjtask", "done", taskA)
+
+	// After done:
+	// - @ should have single parent (the done task)
+	// - Task should be on top of work2
+	// - Task content (task_a.txt) should be preserved
+
+	// Check @ parent is the done task
+	atParent := strings.TrimSpace(repo.runSilent("jj", "log", "-r", "parents(@)", "--no-graph", "-T", "change_id.shortest()"))
+	atParentDesc := repo.runSilent("jj", "log", "-r", atParent, "--no-graph", "-T", "description")
+	if !strings.Contains(atParentDesc, "[task:done]") {
+		t.Errorf("@ parent should be done task, got: %s", atParentDesc)
+	}
+
+	// Task should have work2 as parent (task on top of work)
+	taskParent := repo.runSilent("jj", "log", "-r", "parents("+taskA+")", "--no-graph", "-T", "description")
+	if !strings.Contains(taskParent, "Work commit 2") {
+		t.Errorf("task parent should be work2, got: %s", taskParent)
+	}
+
+	// Task content should be preserved
+	taskDiff := repo.runSilent("jj", "diff", "-r", taskA, "--stat")
+	if !strings.Contains(taskDiff, "task_a.txt") {
+		t.Errorf("task should still have task_a.txt, got: %s", taskDiff)
+	}
+
+	// No conflicts
+	status := repo.runSilent("jj", "log", "-r", "@", "-T", `if(conflict, "CONFLICT", "ok")`)
+	if strings.Contains(status, "CONFLICT") {
+		t.Error("@ should not have conflicts after done")
+	}
+}
+
+func TestDoneMegaMergeWithTaskInWorkChain(t *testing.T) {
+	// Scenario: Task A is already in the work chain (not a direct parent of @).
+	// Task B is a direct parent of @.
+	// When marking both done, Task A should stay in place.
+	//
+	// Starting state:
+	//   @    (merge)
+	//   ├─ taskB [task:wip] with content  (direct parent)
+	//   └─ work2
+	//      └─ taskA [task:wip] with content  (in work chain, not direct parent)
+	//         └─ work1
+	//
+	// After `jjtask done taskA taskB`:
+	//   @
+	//   └─ taskB [task:done]
+	//      └─ work2
+	//         └─ taskA [task:done]  (stays in place!)
+	//            └─ work1
+	t.Parallel()
+	repo := SetupTestRepo(t)
+
+	// Create base and work1
+	repo.WriteFile("base.txt", "base")
+	repo.Run("jj", "describe", "-m", "Base commit")
+	repo.Run("jj", "new", "-m", "Work commit 1")
+	repo.WriteFile("work1.txt", "work 1")
+	work1ID := strings.TrimSpace(repo.runSilent("jj", "log", "-r", "@", "--no-graph", "-T", "change_id.shortest()"))
+
+	// Create Task A with content as child of work1
+	repo.Run("jjtask", "create", "--parent", work1ID, "Task A in chain")
+	taskA := strings.TrimSpace(repo.runSilent("jj", "log", "-r", `tasks() & description(substring:"Task A")`,
+		"--no-graph", "-T", "change_id.shortest()"))
+	repo.Run("jj", "edit", taskA)
+	repo.WriteFile("task_a.txt", "task A content")
+	repo.Run("jjtask", "wip") // Mark as wip
+
+	// Create work2 on top of taskA
+	repo.Run("jj", "new", "-m", "Work commit 2")
+	repo.WriteFile("work2.txt", "work 2")
+	work2ID := strings.TrimSpace(repo.runSilent("jj", "log", "-r", "@", "--no-graph", "-T", "change_id.short()"))
+
+	// Create Task B as sibling of work2 (child of base)
+	baseID := strings.TrimSpace(repo.runSilent("jj", "log", "-r", `description(substring:"Base commit")`,
+		"--no-graph", "-T", "change_id.shortest()"))
+	repo.Run("jjtask", "create", "--parent", baseID, "Task B sibling")
+	taskB := strings.TrimSpace(repo.runSilent("jj", "log", "-r", `tasks() & description(substring:"Task B")`,
+		"--no-graph", "-T", "change_id.shortest()"))
+	repo.Run("jj", "edit", taskB)
+	repo.WriteFile("task_b.txt", "task B content")
+
+	// Create mega-merge: @ has work2 and taskB as parents
+	repo.Run("jj", "edit", work2ID)
+	repo.Run("jj", "new")
+	repo.Run("jjtask", "wip", taskB)
+
+	// Verify structure before done
+	// taskA should be ancestor of work2, not direct parent of @
+	ancestorCheck := repo.runSilent("jj", "log", "-r", `description(substring:"Task A")::`+work2ID, "--no-graph", "-T", "change_id.shortest()")
+	if ancestorCheck == "" {
+		t.Fatalf("taskA should be ancestor of work2")
+	}
+
+	// Mark both tasks done
+	repo.Run("jjtask", "done", taskA, taskB)
+
+	// After done:
+	// - taskA should still be between work1 and work2 (stays in place)
+	// - taskB should be on top of work2
+	// - @ should be on top of taskB
+
+	// Check taskA is still parent of work2
+	work2Parents := repo.runSilent("jj", "log", "-r", "parents("+work2ID+")", "--no-graph", "-T", "description")
+	if !strings.Contains(work2Parents, "Task A") {
+		t.Errorf("work2 parent should still be taskA, got: %s", work2Parents)
+	}
+
+	// Check taskA has work1 as parent
+	taskAParents := repo.runSilent("jj", "log", "-r", "parents("+taskA+")", "--no-graph", "-T", "description")
+	if !strings.Contains(taskAParents, "Work commit 1") {
+		t.Errorf("taskA parent should be work1, got: %s", taskAParents)
+	}
+
+	// Check @ parent is taskB (done, on top of work chain)
+	atParent := strings.TrimSpace(repo.runSilent("jj", "log", "-r", "parents(@)", "--no-graph", "-T", "change_id.shortest()"))
+	atParentDesc := repo.runSilent("jj", "log", "-r", atParent, "--no-graph", "-T", "description")
+	if !strings.Contains(atParentDesc, "Task B") {
+		t.Errorf("@ parent should be taskB, got: %s", atParentDesc)
+	}
+
+	// Both tasks should be marked done
+	taskADesc := repo.runSilent("jj", "log", "-r", taskA, "--no-graph", "-T", "description")
+	if !strings.Contains(taskADesc, "[task:done]") {
+		t.Errorf("taskA should be done, got: %s", taskADesc)
+	}
+	taskBDesc := repo.runSilent("jj", "log", "-r", taskB, "--no-graph", "-T", "description")
+	if !strings.Contains(taskBDesc, "[task:done]") {
+		t.Errorf("taskB should be done, got: %s", taskBDesc)
+	}
+
+	// No conflicts
+	status := repo.runSilent("jj", "log", "-r", "@", "-T", `if(conflict, "CONFLICT", "ok")`)
+	if strings.Contains(status, "CONFLICT") {
+		t.Error("@ should not have conflicts")
+	}
+}

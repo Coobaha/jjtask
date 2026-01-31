@@ -1,0 +1,105 @@
+# wrote base.txt (4 bytes)
+
+$ jj describe -m Base commit
+Working copy  (@) now at: qpvuntsm 25687f26 Base commit
+Parent commit (@-)      : zzzzzzzz 00000000 (empty) (no description set)
+
+$ jj new -m Work commit 1
+Working copy  (@) now at: zsuskuln f2312ee7 (empty) Work commit 1
+Parent commit (@-)      : qpvuntsm 25687f26 Base commit
+
+# wrote work1.txt (6 bytes)
+
+$ jj new -m Work commit 2
+Working copy  (@) now at: mzvwutvl 0705fc67 (empty) Work commit 2
+Parent commit (@-)      : zsuskuln fcda8548 Work commit 1
+
+# wrote work2.txt (6 bytes)
+
+# before
+@  mzvwutvl Work commit 2
+○  zsuskuln Work commit 1
+○  qpvuntsm Base commit
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create --parent q Task A with content
+Created new commit vruxwmqv 8ed16230 (empty) [task:todo] Task A with content
+Created new commit v (empty) [task:todo] Task A with content
+
+# after
+@  mzvwutvl Work commit 2
+○  zsuskuln Work commit 1
+│ ○  vruxwmqv [task:todo] Task A with content
+├─╯
+○  qpvuntsm Base commit
+◆  zzzzzzzz root() 00000000
+
+$ jj edit v
+Working copy  (@) now at: vruxwmqv 8ed16230 (empty) [task:todo] Task A with content
+Parent commit (@-)      : qpvuntsm 25687f26 Base commit
+Added 0 files, modified 0 files, removed 2 files
+
+# wrote task_a.txt (14 bytes)
+
+$ jj status
+Working copy changes:
+A task_a.txt
+Working copy  (@) : vruxwmqv 5cc7e59b [task:todo] Task A with content
+Parent commit (@-): qpvuntsm 25687f26 Base commit
+
+$ jj edit m
+Working copy  (@) now at: mzvwutvl 52c38bfb Work commit 2
+Parent commit (@-)      : zsuskuln fcda8548 Work commit 1
+Added 2 files, modified 0 files, removed 1 files
+
+$ jj new
+Working copy  (@) now at: lylxulpl 93792198 (empty) (no description set)
+Parent commit (@-)      : mzvwutvl 52c38bfb Work commit 2
+
+# before
+@  lylxulpl
+○  mzvwutvl Work commit 2
+○  zsuskuln Work commit 1
+│ ○  vruxwmqv [task:todo] Task A with content
+├─╯
+○  qpvuntsm Base commit
+◆  zzzzzzzz root() 00000000
+
+$ jjtask wip v
+Rebased 1 commits to destination
+Working copy  (@) now at: lylxulpl b5195843 (empty) (no description set)
+Parent commit (@-)      : mzvwutvl 52c38bfb Work commit 2
+Parent commit (@-)      : vruxwmqv f0dd0dcf [task:wip] Task A with content
+Added 1 files, modified 0 files, removed 0 files
+
+# after
+@    lylxulpl
+├─╮
+│ ○  vruxwmqv [task:wip] Task A with content
+○ │  mzvwutvl Work commit 2
+○ │  zsuskuln Work commit 1
+├─╯
+○  qpvuntsm Base commit
+◆  zzzzzzzz root() 00000000
+
+$ jjtask done v
+Rebased 1 descendant commits
+Working copy  (@) now at: lylxulpl 226adbac (empty) (no description set)
+Parent commit (@-)      : mzvwutvl 52c38bfb Work commit 2
+Parent commit (@-)      : vruxwmqv e8fd9837 [task:done] Task A with content
+Rebased 2 commits to destination
+Working copy  (@) now at: lylxulpl f9102c9e (empty) (no description set)
+Parent commit (@-)      : mzvwutvl 52c38bfb Work commit 2
+Parent commit (@-)      : vruxwmqv bfe2d3b2 [task:done] Task A with content
+Rebased 1 commits to destination
+Working copy  (@) now at: lylxulpl 800409b5 (empty) (no description set)
+Parent commit (@-)      : vruxwmqv bfe2d3b2 [task:done] Task A with content
+
+# after
+@  lylxulpl
+○  vruxwmqv [task:done] Task A with content
+○  mzvwutvl Work commit 2
+○  zsuskuln Work commit 1
+○  qpvuntsm Base commit
+◆  zzzzzzzz root() 00000000
+

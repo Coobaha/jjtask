@@ -27,7 +27,7 @@ jjtask wip abc123
 # For single task: work directly in @
 # For merge: jj edit TASK to work in specific task
 jjtask done abc123
-# Task linearizes into ancestry (becomes ancestor of remaining WIP)
+# Task rebases ON TOP of work commits, then @ rebases onto task
 
 # 4. Flatten for push
 jjtask squash
@@ -61,8 +61,8 @@ Progression: `draft` -> `todo` -> `wip` -> `done`
 ```bash
 jjtask wip xyz        # Mark xyz as WIP, add as parent of @
 jjtask wip a b c      # Mark multiple as WIP
-jjtask done xyz       # Mark done, linearizes into ancestry
-jjtask done a b c     # Mark multiple as done
+jjtask done xyz       # Mark done, rebase onto work tip
+jjtask done a b c     # Mark multiple done (chain on top of work)
 jjtask drop xyz       # Remove from @ without completing
 jjtask flag review    # Other flags via generic command
 ```
@@ -255,7 +255,7 @@ jjtask squash
 | ---------------------------------------- | ---------------------------------- |
 | `jjtask create [PARENT] TITLE [DESC]`    | Create TODO (parent defaults to @) |
 | `jjtask wip [TASKS...]`                  | Mark WIP, add as parents of @      |
-| `jjtask done [TASKS...]`                 | Mark done, linearize into ancestry |
+| `jjtask done [TASKS...]`                 | Mark done, rebase on top of work   |
 | `jjtask drop TASKS... [--abandon]`       | Remove from @ (standby or abandon) |
 | `jjtask squash`                          | Flatten @ merge for push           |
 | `jjtask parallel T1 T2... [-p REV]`      | Create parallel TODOs              |

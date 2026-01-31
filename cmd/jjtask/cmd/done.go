@@ -98,24 +98,97 @@ func markDone(cmd *cobra.Command, rev string) (isOrphan bool, err error) {
 	return !inAncestry, nil
 }
 
-// linearizeDoneTask rebases other merge parents onto the done task,
-// then rebases @ onto the top of the new linear chain
+// linearizeDoneTask integrates the done task into @'s linear ancestry.
+// It identifies work branches (non-task parents) and task branches,
+// then rebases tasks ON TOP of work (tasks are newer, work is older).
+//
+// Strategy:
+// 1. Find the work tip (newest work commit among parents)
+// 2. Rebase done task onto work tip
+// 3. Chain other task parents onto done task
+// 4. Rebase @ onto the task chain tip
+//
+// Result: work1 → work2 → work3 → taskA → taskB → @
 func linearizeDoneTask(doneTask string, otherParents []string) error {
-	// Rebase each other parent (with descendants) onto the done task
-	base := doneTask
+	// Separate parents into tasks and work commits
+	var taskParents, workParents []string
 	for _, parent := range otherParents {
-		if err := client.Run("rebase", "-s", parent, "-o", base); err != nil {
-			return fmt.Errorf("rebasing %s onto %s: %w", parent, base, err)
+		if isTaskCommit(parent) {
+			taskParents = append(taskParents, parent)
+		} else {
+			workParents = append(workParents, parent)
 		}
-		base = parent
 	}
 
-	// Rebase @ onto the last parent (now linear on top of done task)
-	if err := client.Run("rebase", "-s", "@", "-o", base); err != nil {
-		return fmt.Errorf("rebasing @ onto %s: %w", base, err)
+	// If no work parents, use old behavior: chain everything onto done task
+	if len(workParents) == 0 {
+		base := doneTask
+		for _, parent := range otherParents {
+			if err := client.Run("rebase", "-s", parent, "-o", base); err != nil {
+				return fmt.Errorf("rebasing %s onto %s: %w", parent, base, err)
+			}
+			base = parent
+		}
+		if err := client.Run("rebase", "-s", "@", "-o", base); err != nil {
+			return fmt.Errorf("rebasing @ onto %s: %w", base, err)
+		}
+		return nil
+	}
+
+	// Find the work tip (newest among work parents)
+	workTip, err := findWorkTip(workParents)
+	if err != nil {
+		return fmt.Errorf("finding work tip: %w", err)
+	}
+
+	// Rebase done task onto work tip (tasks go ON TOP of work)
+	if err := client.Run("rebase", "-s", doneTask, "-o", workTip); err != nil {
+		return fmt.Errorf("rebasing done task %s onto %s: %w", doneTask, workTip, err)
+	}
+
+	// Chain other task parents onto done task
+	taskTip := doneTask
+	for _, taskParent := range taskParents {
+		if err := client.Run("rebase", "-s", taskParent, "-o", taskTip); err != nil {
+			return fmt.Errorf("rebasing task %s onto %s: %w", taskParent, taskTip, err)
+		}
+		taskTip = taskParent
+	}
+
+	// Rebase @ onto the task chain tip
+	if err := client.Run("rebase", "-s", "@", "-o", taskTip); err != nil {
+		return fmt.Errorf("rebasing @ onto %s: %w", taskTip, err)
 	}
 
 	return nil
+}
+
+// isTaskCommit checks if a revision is a task commit (has [task:*] in description)
+func isTaskCommit(rev string) bool {
+	desc, err := client.Query("log", "-r", rev, "--no-graph", "-T", "description")
+	if err != nil {
+		return false
+	}
+	return strings.Contains(desc, "[task:")
+}
+
+// findWorkTip finds the newest commit among work parents
+func findWorkTip(workParents []string) (string, error) {
+	if len(workParents) == 1 {
+		return workParents[0], nil
+	}
+
+	// Find the tip (head) of work branches
+	revset := strings.Join(workParents, " | ")
+	out, err := client.Query("log", "-r", "heads("+revset+")", "--no-graph", "-T", "change_id.shortest()", "--limit", "1")
+	if err != nil {
+		return workParents[0], nil
+	}
+	tip := strings.TrimSpace(out)
+	if tip == "" {
+		return workParents[0], nil
+	}
+	return tip, nil
 }
 
 func printOrphanWarning(orphans []string) {

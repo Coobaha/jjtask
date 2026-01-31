@@ -1,0 +1,145 @@
+# wrote base.txt (4 bytes)
+
+$ jj describe -m Base commit
+Working copy  (@) now at: qpvuntsm 25687f26 Base commit
+Parent commit (@-)      : zzzzzzzz 00000000 (empty) (no description set)
+
+$ jj new -m Work commit 1
+Working copy  (@) now at: kkmpptxz f0f450d0 (empty) Work commit 1
+Parent commit (@-)      : qpvuntsm 25687f26 Base commit
+
+# wrote work1.txt (6 bytes)
+
+# before
+@  kkmpptxz Work commit 1
+○  qpvuntsm Base commit
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create --parent k Task A in chain
+Created new commit royxmykx a4aff9cc (empty) [task:todo] Task A in chain
+Created new commit r (empty) [task:todo] Task A in chain
+
+# after
+○  royxmykx [task:todo] Task A in chain
+@  kkmpptxz Work commit 1
+○  qpvuntsm Base commit
+◆  zzzzzzzz root() 00000000
+
+$ jj edit r
+Working copy  (@) now at: royxmykx a4aff9cc (empty) [task:todo] Task A in chain
+Parent commit (@-)      : kkmpptxz cf5dcef4 Work commit 1
+
+# wrote task_a.txt (14 bytes)
+
+# before
+@  royxmykx [task:todo] Task A in chain
+○  kkmpptxz Work commit 1
+○  qpvuntsm Base commit
+◆  zzzzzzzz root() 00000000
+
+$ jjtask wip
+Working copy  (@) now at: royxmykx f4fa47a7 [task:wip] Task A in chain
+Parent commit (@-)      : kkmpptxz cf5dcef4 Work commit 1
+
+# after
+@  royxmykx [task:wip] Task A in chain
+○  kkmpptxz Work commit 1
+○  qpvuntsm Base commit
+◆  zzzzzzzz root() 00000000
+
+$ jj new -m Work commit 2
+Working copy  (@) now at: wqnwkozp 4e82d2ee (empty) Work commit 2
+Parent commit (@-)      : royxmykx f4fa47a7 [task:wip] Task A in chain
+
+# wrote work2.txt (6 bytes)
+
+# before
+@  wqnwkozp Work commit 2
+○  royxmykx [task:wip] Task A in chain
+○  kkmpptxz Work commit 1
+○  qpvuntsm Base commit
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create --parent q Task B sibling
+Created new commit uyznsvlq 007d5cd6 (empty) [task:todo] Task B sibling
+Created new commit u (empty) [task:todo] Task B sibling
+
+# after
+@  wqnwkozp Work commit 2
+○  royxmykx [task:wip] Task A in chain
+○  kkmpptxz Work commit 1
+│ ○  uyznsvlq [task:todo] Task B sibling
+├─╯
+○  qpvuntsm Base commit
+◆  zzzzzzzz root() 00000000
+
+$ jj edit u
+Working copy  (@) now at: uyznsvlq 007d5cd6 (empty) [task:todo] Task B sibling
+Parent commit (@-)      : qpvuntsm 25687f26 Base commit
+Added 0 files, modified 0 files, removed 3 files
+
+# wrote task_b.txt (14 bytes)
+
+$ jj edit wqnwkozpkust
+Working copy  (@) now at: wqnwkozp e7aa6a81 Work commit 2
+Parent commit (@-)      : royxmykx f4fa47a7 [task:wip] Task A in chain
+Added 3 files, modified 0 files, removed 1 files
+
+$ jj new
+Working copy  (@) now at: wvuyspvk b3ccb7e3 (empty) (no description set)
+Parent commit (@-)      : wqnwkozp e7aa6a81 Work commit 2
+
+# before
+@  wvuyspvk
+○  wqnwkozp Work commit 2
+○  royxmykx [task:wip] Task A in chain
+○  kkmpptxz Work commit 1
+│ ○  uyznsvlq [task:todo] Task B sibling
+├─╯
+○  qpvuntsm Base commit
+◆  zzzzzzzz root() 00000000
+
+$ jjtask wip u
+Rebased 1 commits to destination
+Working copy  (@) now at: wvuyspvk d29807e6 (empty) (no description set)
+Parent commit (@-)      : wqnwkozp e7aa6a81 Work commit 2
+Parent commit (@-)      : uyznsvlq 8c1ab80c [task:wip] Task B sibling
+Added 1 files, modified 0 files, removed 0 files
+
+# after
+@    wvuyspvk
+├─╮
+│ ○  uyznsvlq [task:wip] Task B sibling
+○ │  wqnwkozp Work commit 2
+○ │  royxmykx [task:wip] Task A in chain
+○ │  kkmpptxz Work commit 1
+├─╯
+○  qpvuntsm Base commit
+◆  zzzzzzzz root() 00000000
+
+$ jjtask done r u
+Rebased 2 descendant commits
+Working copy  (@) now at: wvuyspvk c8494559 (empty) (no description set)
+Parent commit (@-)      : wqnwkozp 7b1db253 Work commit 2
+Parent commit (@-)      : uyznsvlq 8c1ab80c [task:wip] Task B sibling
+Rebased 1 descendant commits
+Working copy  (@) now at: wvuyspvk 7ee1467c (empty) (no description set)
+Parent commit (@-)      : wqnwkozp 7b1db253 Work commit 2
+Parent commit (@-)      : uyznsvlq 7ef061d8 [task:done] Task B sibling
+Rebased 2 commits to destination
+Working copy  (@) now at: wvuyspvk 69528ce9 (empty) (no description set)
+Parent commit (@-)      : wqnwkozp 7b1db253 Work commit 2
+Parent commit (@-)      : uyznsvlq cd1ac8ef [task:done] Task B sibling
+Rebased 1 commits to destination
+Working copy  (@) now at: wvuyspvk 32815821 (empty) (no description set)
+Parent commit (@-)      : uyznsvlq cd1ac8ef [task:done] Task B sibling
+
+# after
+@  wvuyspvk
+○  uyznsvlq [task:done] Task B sibling
+○  wqnwkozp Work commit 2
+○  royxmykx [task:done] Task A in chain
+○  kkmpptxz Work commit 1
+○  qpvuntsm Base commit
+◆  zzzzzzzz root() 00000000
+

@@ -1,0 +1,158 @@
+# wrote base.txt (4 bytes)
+
+$ jj describe -m Base commit
+Working copy  (@) now at: qpvuntsm 25687f26 Base commit
+Parent commit (@-)      : zzzzzzzz 00000000 (empty) (no description set)
+
+$ jj new -m Work commit 1
+Working copy  (@) now at: zsuskuln f2312ee7 (empty) Work commit 1
+Parent commit (@-)      : qpvuntsm 25687f26 Base commit
+
+# wrote work1.txt (6 bytes)
+
+$ jj new -m Work commit 2
+Working copy  (@) now at: mzvwutvl 0705fc67 (empty) Work commit 2
+Parent commit (@-)      : zsuskuln fcda8548 Work commit 1
+
+# wrote work2.txt (6 bytes)
+
+$ jj new -m Work commit 3
+Working copy  (@) now at: royxmykx 81ae20ba (empty) Work commit 3
+Parent commit (@-)      : mzvwutvl 52c38bfb Work commit 2
+
+# wrote work3.txt (6 bytes)
+
+# before
+@  royxmykx Work commit 3
+○  mzvwutvl Work commit 2
+○  zsuskuln Work commit 1
+○  qpvuntsm Base commit
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create --parent q Task A
+Created new commit yostqsxw 4c18dc5c (empty) [task:todo] Task A
+Created new commit y (empty) [task:todo] Task A
+
+# after
+@  royxmykx Work commit 3
+○  mzvwutvl Work commit 2
+○  zsuskuln Work commit 1
+│ ○  yostqsxw [task:todo] Task A
+├─╯
+○  qpvuntsm Base commit
+◆  zzzzzzzz root() 00000000
+
+$ jjtask create --parent q Task B
+Created new commit wqnwkozp 04e0f2df (empty) [task:todo] Task B
+Created new commit w (empty) [task:todo] Task B
+
+# after
+@  royxmykx Work commit 3
+○  mzvwutvl Work commit 2
+○  zsuskuln Work commit 1
+│ ○  wqnwkozp [task:todo] Task B
+├─╯
+│ ○  yostqsxw [task:todo] Task A
+├─╯
+○  qpvuntsm Base commit
+◆  zzzzzzzz root() 00000000
+
+$ jj edit r
+Already editing that commit
+
+$ jj new
+Working copy  (@) now at: uyznsvlq 34627937 (empty) (no description set)
+Parent commit (@-)      : royxmykx 396431fd Work commit 3
+
+# before
+@  uyznsvlq
+○  royxmykx Work commit 3
+○  mzvwutvl Work commit 2
+○  zsuskuln Work commit 1
+│ ○  wqnwkozp [task:todo] Task B
+├─╯
+│ ○  yostqsxw [task:todo] Task A
+├─╯
+○  qpvuntsm Base commit
+◆  zzzzzzzz root() 00000000
+
+$ jjtask wip y
+Rebased 1 commits to destination
+Working copy  (@) now at: uyznsvlq dadbd7d0 (empty) (no description set)
+Parent commit (@-)      : royxmykx 396431fd Work commit 3
+Parent commit (@-)      : yostqsxw 08f2d471 (empty) [task:wip] Task A
+
+# after
+@    uyznsvlq
+├─╮
+│ ○  yostqsxw [task:wip] Task A
+○ │  royxmykx Work commit 3
+○ │  mzvwutvl Work commit 2
+○ │  zsuskuln Work commit 1
+├─╯
+│ ○  wqnwkozp [task:todo] Task B
+├─╯
+○  qpvuntsm Base commit
+◆  zzzzzzzz root() 00000000
+
+$ jjtask wip w
+Rebased 1 commits to destination
+Working copy  (@) now at: uyznsvlq 45cd6cee (empty) (no description set)
+Parent commit (@-)      : yostqsxw 08f2d471 (empty) [task:wip] Task A
+Parent commit (@-)      : royxmykx 396431fd Work commit 3
+Parent commit (@-)      : wqnwkozp 62d2c94a (empty) [task:wip] Task B
+
+# after
+@      uyznsvlq
+├─┬─╮
+│ │ ○  wqnwkozp [task:wip] Task B
+│ ○ │  royxmykx Work commit 3
+│ ○ │  mzvwutvl Work commit 2
+│ ○ │  zsuskuln Work commit 1
+│ ├─╯
+○ │  yostqsxw [task:wip] Task A
+├─╯
+○  qpvuntsm Base commit
+◆  zzzzzzzz root() 00000000
+
+$ jjtask done y w
+
+⚠️  Task is empty - no changes to mark done
+If this is a planning-only task, this warning can be ignored.
+
+Rebased 1 descendant commits
+Working copy  (@) now at: uyznsvlq 2eca4449 (empty) (no description set)
+Parent commit (@-)      : yostqsxw 3f9a64f2 (empty) [task:done] Task A
+Parent commit (@-)      : royxmykx 396431fd Work commit 3
+Parent commit (@-)      : wqnwkozp 62d2c94a (empty) [task:wip] Task B
+Rebased 2 commits to destination
+Working copy  (@) now at: uyznsvlq 7558e4d5 (empty) (no description set)
+Parent commit (@-)      : yostqsxw 73849437 (empty) [task:done] Task A
+Parent commit (@-)      : royxmykx 396431fd Work commit 3
+Parent commit (@-)      : wqnwkozp 62d2c94a (empty) [task:wip] Task B
+Rebased 2 commits to destination
+Working copy  (@) now at: uyznsvlq 6e9f1b7f (empty) (no description set)
+Parent commit (@-)      : yostqsxw 73849437 (empty) [task:done] Task A
+Parent commit (@-)      : royxmykx 396431fd Work commit 3
+Parent commit (@-)      : wqnwkozp db3017e9 (empty) [task:wip] Task B
+Rebased 1 commits to destination
+Working copy  (@) now at: uyznsvlq 23d394be (empty) (no description set)
+Parent commit (@-)      : wqnwkozp db3017e9 (empty) [task:wip] Task B
+
+⚠️  Task is empty - no changes to mark done
+If this is a planning-only task, this warning can be ignored.
+
+Rebased 1 descendant commits
+Working copy  (@) now at: uyznsvlq bc2e2614 (empty) (no description set)
+Parent commit (@-)      : wqnwkozp cea42de3 (empty) [task:done] Task B
+
+# after
+@  uyznsvlq
+○  wqnwkozp [task:done] Task B
+○  yostqsxw [task:done] Task A
+○  royxmykx Work commit 3
+○  mzvwutvl Work commit 2
+○  zsuskuln Work commit 1
+○  qpvuntsm Base commit
+◆  zzzzzzzz root() 00000000
+
