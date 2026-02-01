@@ -56,14 +56,26 @@ if [[ -x "$SCRIPT_DIR/bin/jjtask-go" ]]; then
   # Plugin cache (used by agent sessions)
   PLUGIN_CACHE_DIR="${HOME}/.claude/plugins/cache/jjtask-marketplace/jjtask"
   if [[ -d "$PLUGIN_CACHE_DIR" ]]; then
-    for version_dir in "$PLUGIN_CACHE_DIR"/*/bin; do
+    for version_dir in "$PLUGIN_CACHE_DIR"/*/; do
       [[ -d "$version_dir" ]] || continue
-      cache_dst="$version_dir/jjtask-go"
-      if [[ -e "$cache_dst" ]] || [[ -L "$cache_dst" ]]; then
-        rm "$cache_dst"
+      version=$(basename "$version_dir")
+
+      # Symlink jjtask-go binary
+      cache_dst="$version_dir/bin/jjtask-go"
+      if [[ -d "$version_dir/bin" ]]; then
+        if [[ -e "$cache_dst" ]] || [[ -L "$cache_dst" ]]; then
+          rm "$cache_dst"
+        fi
+        ln -s "$SCRIPT_DIR/bin/jjtask-go" "$cache_dst"
+        echo "  Linked: cache $version/jjtask-go -> bin/jjtask-go"
       fi
-      ln -s "$SCRIPT_DIR/bin/jjtask-go" "$cache_dst"
-      echo "  Linked: cache $(basename "$(dirname "$version_dir")")/jjtask-go -> bin/jjtask-go"
+
+      # Sync hooks directory to cache
+      if [[ -d "$PLUGIN_SOURCE/hooks" ]]; then
+        rm -rf "$version_dir/hooks"
+        cp -r "$PLUGIN_SOURCE/hooks" "$version_dir/hooks"
+        echo "  Synced: cache $version/hooks"
+      fi
     done
   fi
 else
