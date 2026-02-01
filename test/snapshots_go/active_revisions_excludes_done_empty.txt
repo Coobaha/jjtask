@@ -2,7 +2,7 @@ $ jjtask create Todo task
 Created new commit rlvkpnrz f8c57ce0 (empty) [task:todo] Todo task
 Created new commit r (empty) [task:todo] Todo task
 
-$ jjtask create --parent root() Wip task
+$ jjtask create root() Wip task
 Created new commit kkmpptxz 73c72577 (empty) [task:todo] Wip task
 Created new commit k (empty) [task:todo] Wip task
 
@@ -16,7 +16,7 @@ If this is a planning-only task, this warning can be ignored.
 
 Tip: Consider using 'jjtask wip' or 'jjtask done' for the mega-merge workflow
 
-$ jjtask create --parent root() Another task
+$ jjtask create root() Another task
 Created new commit vruxwmqv 83be78aa (empty) [task:todo] Another task
 Created new commit v (empty) [task:todo] Another task
 

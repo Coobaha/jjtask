@@ -19,7 +19,7 @@ jjtask drop TASKS... [--abandon]     Remove from @ (standby or abandon)
 jjtask squash                        Flatten @ merge for push
 jjtask find [-s STATUS] [-r REVSET]  List tasks (status: todo/wip/done/all)
 jjtask flag STATUS [-r REV]          Change task flag (defaults to @)
-jjtask parallel T1 T2... [-p REV]    Create sibling tasks (defaults to @)
+jjtask parallel [PARENT] T1 T2...    Create sibling tasks (defaults to @)
 jjtask show-desc [-r REV]            Print revision description
 jjtask desc-transform CMD [-r REV]   Transform description with command
 jjtask checkpoint [-m MSG]           Create checkpoint commit

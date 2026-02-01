@@ -6,8 +6,8 @@
 # Create parallel branches from @ (default parent)
 jjtask parallel "Widget A" "Widget B" "Widget C"
 
-# Or specify parent explicitly
-jjtask parallel --parent xyz123 "Widget A" "Widget B"
+# Or specify parent explicitly (positional)
+jjtask parallel xyz123 "Widget A" "Widget B"
 
 # Merge point (all parents must complete)
 jj new --no-edit <A-id> <B-id> <C-id> -m "[task:todo] Integration\n\n..."

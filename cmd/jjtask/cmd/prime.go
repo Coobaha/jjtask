@@ -131,7 +131,7 @@ Use --compact for minimal output (task counts only).`,
 		fmt.Println("jjtask squash                        Flatten @ merge for push")
 		fmt.Println("jjtask find [-s STATUS] [-r REVSET]  List tasks (status: todo/wip/done/all)")
 		fmt.Println("jjtask flag STATUS [-r REV]          Change task flag (defaults to @)")
-		fmt.Println("jjtask parallel T1 T2... [-p REV]    Create sibling tasks (defaults to @)")
+		fmt.Println("jjtask parallel [PARENT] T1 T2...    Create sibling tasks (defaults to @)")
 		fmt.Println("jjtask show-desc [-r REV]            Print revision description")
 		fmt.Println("jjtask desc-transform CMD [-r REV]   Transform description with command")
 		fmt.Println("jjtask checkpoint [-m MSG]           Create checkpoint commit")

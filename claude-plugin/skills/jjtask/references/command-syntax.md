@@ -9,7 +9,7 @@
 | `jjtask done [TASKS...]`                 | Mark done, rebase on top of work   |
 | `jjtask drop TASKS... [--abandon]`       | Remove from @ (standby or abandon) |
 | `jjtask squash`                          | Flatten @ merge for push           |
-| `jjtask parallel T1 T2... [-p REV]`      | Create parallel TODOs              |
+| `jjtask parallel [PARENT] T1 T2...`      | Create parallel TODOs              |
 | `jjtask flag STATUS [-r REV]`            | Update status flag (defaults to @) |
 | `jjtask find [-s STATUS] [-r REVSET]`    | Find tasks by status or revset     |
 | `jjtask show-desc [-r REV]`              | Print revision description         |
