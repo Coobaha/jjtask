@@ -272,7 +272,7 @@ func printCompactPrime() error {
 	fmt.Println("jjtask -h                # all commands")
 	fmt.Println("```")
 	fmt.Println()
-	fmt.Println("Load `/jjtask` for full workflow.")
+	fmt.Println("When working with task IDs or [task:*] revisions, load `/jjtask` skill and run `jjtask wip ID` FIRST.")
 
 	return nil
 }

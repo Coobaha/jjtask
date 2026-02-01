@@ -1,6 +1,6 @@
 ---
 name: jjtask
-description: Structured TODO commit workflow using JJ (Jujutsu). Use to plan tasks as empty commits with [task:*] flags, track progress through status transitions, manage parallel task DAGs with dependency checking. Enforces completion discipline. Enables to divide work between Planners and Workers.
+description: Structured TODO commit workflow using JJ (Jujutsu). Use when user mentions jjtask, jj task, task IDs to work on, revisions with [task:*] flags, or wants to manage tasks. Plan tasks as empty commits with [task:*] flags, track progress through status transitions, manage parallel task DAGs. Enforces completion discipline.
 ---
 
 <context>
@@ -34,6 +34,14 @@ jjtask squash
 # Squashes all merged task content into linear commit
 ```
 </quick_start>
+
+<workflow_trigger>
+When user references a task ID and expects work to begin (e.g., "work on lu", "do task xy", "here's the task spec"):
+
+1. Run `jjtask wip <id>` FIRST before any investigation
+2. Then read spec, investigate, implement
+3. Run `jjtask done` only when all criteria met
+</workflow_trigger>
 
 <commands>
 
